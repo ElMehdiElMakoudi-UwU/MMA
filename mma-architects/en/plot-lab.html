@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plot Lab · MMA Architects</title>
+<meta name="description" content="Test your plot in 3D: massing, sun, floor area and a first budget.">
+<meta name="theme-color" content="#0B1A1F">
+<link rel="alternate" hreflang="fr" href="../fr/plot-lab.html">
+<link rel="icon" href="../assets/logo-mma-white.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:SHRP,wght@0..100,200..600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/site.css">
+<script>document.documentElement.classList.add('js')</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wipe" aria-hidden="true"><img src="../assets/logo-mma-white.png" alt=""></div>
+<header class="head">
+  <a class="logo" href="../en/index.html"><img src="../assets/logo-mma-white.png" alt="MMA, Mharrech Mribah Architects" width="500" height="172"></a>
+  <nav class="nav" aria-label="Main">
+    <a href="../en/projects.html">Projects</a><a href="../en/plot-lab.html" aria-current=page>Plot Lab</a><a href="../en/expertise.html">Expertise</a><a href="../en/studio.html">Studio</a>
+    <span class="lang"><a href="../fr/plot-lab.html" hreflang="fr">FR</a></span>
+    <a class="btn" href="../en/contact.html">Start a project</a>
+    <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  </nav>
+</header>
+<div class="mobile-menu">
+  <a class="display" href="../en/projects.html">Projects</a><a class="display" href="../en/plot-lab.html">Plot Lab</a><a class="display" href="../en/expertise.html">Expertise</a><a class="display" href="../en/studio.html">Studio</a>
+  <a class="display" href="../en/contact.html">Start a project</a>
+  <div class="btn-row"><a class="link" href="../fr/plot-lab.html" hreflang="fr">Français</a></div>
+</div>
+<main id="main">
+
+<section class="lab" id="labRoot">
+  <div class="lab-stage">
+    <div class="lab-canvas" aria-label="3D model of the building on the plot. Drag to turn it."></div>
+    <div class="lab-title">
+      <h1 class="display d-l" data-lines>Plot Lab</h1>
+      <p style="margin-top:6px;max-width:27em">Shape a first idea of your project, then send it to the architects.</p>
+    </div>
+    <p class="lab-hint">Drag to turn · Scroll or pinch to zoom</p>
+  </div>
+  <aside class="lab-panel" aria-label="Study controls">
+    <div class="seg" role="group" aria-label="Type of project"><button type="button" data-program="villa">Villa</button><button type="button" data-program="apartments">Apartments</button><button type="button" data-program="hotel">Hotel</button></div>
+    <div class="ctl"><label for="labArea"><span>Plot size</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
+    <div class="ctl"><label for="labCover"><span>Coverage of the plot</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"></div>
+    <div class="ctl"><label for="labFloors"><span>Levels</span><output id="outFloors"></output></label><input id="labFloors" type="range" step="1"></div>
+    <div class="ctl"><label for="labHour"><span>Time of day</span><output id="outHour"></output></label><input id="labHour" type="range" min="6" max="21" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">Play the day</button></div>
+    <div class="seg" role="group" aria-label="Level of finish"><button type="button" data-finish="standard">Standard</button><button type="button" data-finish="premium">Premium</button><button type="button" data-finish="highend">High-end</button></div>
+    <div class="lab-res" aria-live="polite">
+      <div><span>Floor area</span><strong id="resFloor"></strong></div>
+      <div><span>Rough capacity</span><strong id="resCap"></strong></div>
+      <div class="wide"><span>First budget, excluding land</span><strong id="resBudget"></strong></div>
+    </div>
+    <div class="lab-actions">
+      <a class="btn" id="labSend" href="../en/contact.html">Send this study to MMA <span class="arr" aria-hidden="true">&rarr;</span></a>
+      <button class="mini" id="labSave" type="button">Save option</button>
+      <button class="mini" id="labShare" type="button">Copy link</button>
+    </div>
+    <p class="note">Illustrative only, using sample rates that MMA will confirm. Real limits come from your plot's planning rules. Capacity assumes 85 m² per apartment and 40 m² per room. Sun position is indicative.</p>
+  </aside>
+</section>
+<section class="section wrap white hide" id="labCompare" style="padding-block:clamp(40px,6vw,90px)">
+  <h2 class="display d-m" style="margin-bottom:22px">Your options, side by side.</h2>
+  <div class="table-scroll"><table class="compare-table"><thead><tr><th scope=col>Option</th><th scope=col>Type</th><th scope=col>Plot</th><th scope=col>Coverage</th><th scope=col>Levels</th><th scope=col>Floor area</th><th scope=col>Capacity</th><th scope=col>Finish</th><th scope=col>Budget (MAD)</th><th scope=col></th></tr></thead><tbody id="labCompareBody"></tbody></table></div>
+</section>
+<section class="final">
+  <img src="../assets/img/tower-3.webp" alt="" loading="lazy" data-parallax="5">
+  <div class="final-body">
+    <h2 class="display d-l" data-lines>Bring us the plot. We'll show you what it can become.</h2>
+    <div class="btn-row" data-reveal><a class="btn " href="../en/contact.html">Start your project <span class="arr" aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="../en/plot-lab.html">Test it in 3D first <span class="arr" aria-hidden="true">&rarr;</span></a></div>
+  </div>
+</section>
+
+</main>
+<footer class="foot">
+  <div class="foot-grid">
+    <div><img class="foot-logo" src="../assets/logo-full-white.png" alt="MMA, Mharrech Mribah Architects" loading="lazy"></div>
+    <div><h4>Explore</h4><ul><li><a href="../en/projects.html">Projects</a></li><li><a href="../en/plot-lab.html">Plot Lab</a></li><li><a href="../en/expertise.html">Expertise</a></li><li><a href="../en/studio.html">Studio</a></li></ul></div>
+    <div><h4>Talk to us</h4><ul>
+      <li><a href="tel:+212661225067">06 61 22 50 67</a></li>
+      <li><a href="tel:+212633931542">06 33 93 15 42</a></li>
+      <li><a href="https://wa.me/212661225067?text=Hello%20MMA%2C%20I%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener">WhatsApp</a></li>
+    </ul></div>
+    <div><h4>Studio</h4><ul><li>Tangier, Morocco</li><li><a href="../en/contact.html">Start a project</a></li></ul></div>
+  </div>
+  <div class="foot-end"><span>© 2026 MMA, Mharrech Mribah Architects</span><span>Images are design visualizations.</span></div>
+</footer>
+<div class="dock">
+  <div class="dock-menu">
+    <a href="https://wa.me/212661225067?text=Hello%20MMA%2C%20I%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener">WhatsApp</a>
+    <a href="tel:+212661225067">06 61 22 50 67</a>
+    <a href="../en/contact.html">Start a project</a>
+  </div>
+  <button class="dock-btn" type="button" aria-expanded="false" aria-label="Talk to an architect"><i></i><span>Talk to an architect</span></button>
+</div>
+<div class="cursor" aria-hidden="true"></div>
+<script>window.MMA_I18N={"lab": {"rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]}, "ground": "G", "units": "apartments", "rooms": "rooms", "oneVilla": "1 villa", "play": "Play the day", "pause": "Pause", "share": "Copy link", "copied": "Link copied", "linkInBar": "Link is in the address bar", "save": "Save option", "saved": "Saved", "option": "Option", "remove": "Remove", "programs": {"villa": "Villa", "apartments": "Apartments", "hotel": "Hotel"}, "finishes": {"standard": "Standard", "premium": "Premium", "highend": "High-end"}, "contactUrl": "../en/contact.html", "noGl": "3D isn't available in this browser. You can still use the controls to see the figures."}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="../js/site.js"></script>
+<script type="module">import {mountLab} from '../js/lab.js';mountLab(document.getElementById('labRoot'));</script>
+</body>
+</html>
