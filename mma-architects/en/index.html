@@ -7,6 +7,10 @@
 <meta name="description" content="Architecture practice for people investing in Moroccan property: homes, apartment buildings, hotels and estates.">
 <meta name="theme-color" content="#0B1A1F">
 <link rel="alternate" hreflang="fr" href="../fr/index.html">
+<link rel="alternate" hreflang="es" href="../es/index.html">
+<link rel="alternate" hreflang="ar" href="../ar/index.html">
+<link rel="alternate" hreflang="zh" href="../zh/index.html">
+<link rel="alternate" hreflang="x-default" href="../fr/index.html">
 <link rel="icon" href="../assets/logo-mma-white.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +27,7 @@
   <a class="logo" href="../en/index.html"><img src="../assets/logo-mma-white.png" alt="MMA, Mharrech Mribah Architects" width="500" height="172"></a>
   <nav class="nav" aria-label="Main">
     <a href="../en/projects.html">Projects</a><a href="../en/plot-lab.html">Plot Lab</a><a href="../en/expertise.html">Expertise</a><a href="../en/studio.html">Studio</a>
-    <span class="lang"><a href="../fr/index.html" hreflang="fr">FR</a></span>
+    <div class="lang" role="group" aria-label="Language"><a href="../fr/index.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><span aria-current="true" aria-label="English">EN</span><a href="../es/index.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/index.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
     <a class="btn" href="../en/contact.html">Start a project</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
   </nav>
@@ -31,7 +35,7 @@
 <div class="mobile-menu">
   <a class="display" href="../en/projects.html">Projects</a><a class="display" href="../en/plot-lab.html">Plot Lab</a><a class="display" href="../en/expertise.html">Expertise</a><a class="display" href="../en/studio.html">Studio</a>
   <a class="display" href="../en/contact.html">Start a project</a>
-  <div class="btn-row"><a class="link" href="../fr/index.html" hreflang="fr">Français</a></div>
+  <div class="lang" role="group" aria-label="Language"><a href="../fr/index.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><span aria-current="true" aria-label="English">EN</span><a href="../es/index.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/index.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
 </div>
 <main id="main">
 
@@ -51,21 +55,30 @@
 
 <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>27,024 m² <small>largest scheme</small></span><span>180 <small>apartments in one building</small></span><span>4 stars <small>hotel in Chefchaouen</small></span><span>2 min <small>from the TGV station</small></span><span>8 projects <small>in the selected works</small></span></div></div>
 
-<section class="section wrap">
-  <p class="display statement">The decisions that make or lose the most money are taken before the first wall goes up. What the plot allows. What the building can hold. What it will feel like to live in, stay in or buy. We make those decisions visible, while they can still change.</p>
-</section>
-
-<section class="story">
-  <div class="story-pin">
-    <div>
-      <span class="eyebrow">Case study · Tangier</span>
-      <p class="display story-num"><b data-from="4604" data-to="1353" data-locale="en-GB" style="font-weight:300">4,604</b><small>m²</small></p>
-      <div class="story-steps"><div class="story-step"><h3 class="display d-s">The rules take most of it</h3><p class="muted">A 4,604 m² plot looked like an easy win. Once the planning rules were applied, only 1,353 m² remained buildable. This is where most projects lose money, before anyone notices.</p></div><div class="story-step"><h3 class="display d-s">We test the volume</h3><p class="muted">Base, main body and upper levels are tested against the limits until the building earns its height on that exact plot.</p></div><div class="story-step"><h3 class="display d-s">We draw every floor to work</h3><p class="muted">Apartment by apartment, the floor plate is drawn so that the building you can sell or rent matches the building you can build.</p></div><div class="story-step"><h3 class="display d-s">A restricted plot becomes an address</h3><p class="muted">Two minutes on foot from Tanger Ville station, the constraint has turned into the building&#x27;s identity.</p></div></div>
-      <div class="story-progress" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      <p style="margin-top:18px"><a class="link" href="../en/projects/residential-tower-tangier.html">See the full project</a></p>
-    </div>
-    <div class="story-frames"><img src="../assets/img/tower-d1.webp" alt="" loading="lazy"><img src="../assets/img/tower-d3.webp" alt="" loading="lazy"><img src="../assets/img/tower-plan.webp" alt="" loading="lazy"><img src="../assets/img/tower-1.webp" alt="" loading="lazy" class=full></div>
-  </div>
+<section class="section wrap before-wall">
+  <h2 class="display d-l" data-lines>Money is made or lost before the first wall.</h2>
+  <ol class="bw-steps">
+    <li data-reveal>
+      <svg class="bw-draw" viewBox="0 0 200 130" aria-hidden="true"><polygon points="100,30 185,75 100,120 15,75"/><polygon class="bw-sun" stroke-dasharray="4 4" points="100,55 138,75 100,95 62,75"/></svg>
+      <span class="bw-axis" aria-hidden="true"></span>
+      <div><h3 class="display d-s">The plot</h3><p class="muted">What it allows</p></div>
+    </li>
+    <li data-reveal>
+      <svg class="bw-draw" viewBox="0 0 200 130" aria-hidden="true"><polygon class="bw-faint" points="100,30 185,75 100,120 15,75"/><path class="bw-sun" d="M100 10 138 30 100 50 62 30Z M62 30V75L100 95V50M138 30V75L100 95"/><path d="M62 45 100 65 138 45M62 60 100 80 138 60"/></svg>
+      <span class="bw-axis" aria-hidden="true"></span>
+      <div><h3 class="display d-s">The building</h3><p class="muted">What it can hold</p></div>
+    </li>
+    <li data-reveal>
+      <svg class="bw-draw" viewBox="0 0 200 130" aria-hidden="true"><polygon class="bw-faint" points="100,30 185,75 100,120 15,75"/><polygon class="bw-shadow" points="62,75 100,95 80,105 42,85"/><path d="M100 10 138 30 100 50 62 30Z M62 30V75L100 95V50M138 30V75L100 95"/><polygon class="bw-lit" points="110,57 128,47.5 128,57.5 110,67"/><circle class="bw-lit" cx="172" cy="22" r="9"/></svg>
+      <span class="bw-axis" aria-hidden="true"></span>
+      <div><h3 class="display d-s">The feeling</h3><p class="muted">Living in it, staying in it, buying it</p></div>
+    </li>
+    <li class="bw-wall" data-reveal>
+      <span class="bw-block" aria-hidden="true"></span>
+      <div><h3 class="display d-s">First wall</h3></div>
+    </li>
+  </ol>
+  <p class="lede bw-note" data-reveal>We make these decisions visible, while they can still change.</p>
 </section>
 
 <section class="rail-wrap" data-rail>
@@ -73,7 +86,10 @@
     <h2 class="display d-l" data-lines>Selected work</h2>
     <a class="link" href="../en/projects.html">All projects</a>
   </div>
-  <div class="rail"><a class="pcard" href="../en/projects/hotel-chefchaouen.html" data-type="hospitality" data-cursor="View">
+  <div class="rail"><a class="pcard" href="../en/projects/residential-tower-tangier.html" data-type="apartments" data-cursor="View">
+  <div class="pcard-media"><img src="../assets/img/tower-1.webp" alt="Residential tower" loading="lazy" style="view-transition-name:p-residential-tower-tangier"></div>
+  <div class="pcard-info"><h3>Residential tower</h3><span>Tangier · Apartments</span></div>
+</a><a class="pcard" href="../en/projects/hotel-chefchaouen.html" data-type="hospitality" data-cursor="View">
   <div class="pcard-media"><img src="../assets/img/hotel-dusk.webp" alt="4-star hotel" loading="lazy" style="view-transition-name:p-hotel-chefchaouen"></div>
   <div class="pcard-info"><h3>4-star hotel</h3><span>Chefchaouen · Hospitality</span></div>
 </a><a class="pcard" href="../en/projects/180-apartments-tangier.html" data-type="apartments" data-cursor="View">
@@ -129,38 +145,95 @@
   <div class="grid" style="margin-bottom:clamp(28px,4vw,60px);align-items:end">
     <h2 class="display d-l" style="grid-column:1/-1" data-lines>What are you investing in?</h2>
   </div>
-  <div class="types"><a class="type" data-float="home" href="../en/expertise.html#home"><span class="display d-m">A villa or family home</span><p class="muted">Does it suit the plot, your budget and the way you will live in it?</p></a><a class="type" data-float="rental" href="../en/expertise.html#rental"><span class="display d-m">An apartment building</span><p class="muted">How many homes can it hold, and which layouts will rent or sell best?</p></a><a class="type" data-float="hospitality" href="../en/expertise.html#hospitality"><span class="display d-m">A hotel or guest house</span><p class="muted">Can the site carry the rooms, circulation and services the business needs?</p></a><a class="type" data-float="estate" href="../en/expertise.html#estate"><span class="display d-m">A multi-building estate</span><p class="muted">How do the buildings share one site while staying private?</p></a></div>
+  <div class="types"><a class="type" data-float="home" href="../en/expertise.html#home"><span class="display d-m">A villa or family home</span><p class="muted">Does it suit the plot, your budget and the way you will live in it?</p></a><a class="type" data-float="rental" href="../en/expertise.html#rental"><span class="display d-m">An apartment building</span><p class="muted">How many homes can it hold, and which layouts will rent or sell best?</p></a><a class="type" data-float="hospitality" href="../en/expertise.html#hospitality"><span class="display d-m">A hotel or guest house</span><p class="muted">Can the site carry the rooms, circulation and services the business needs?</p></a><a class="type" data-float="estate" href="../en/expertise.html#estate"><span class="display d-m">A multi-building estate</span><p class="muted">How do the buildings share one site while staying private?</p></a><a class="type" data-float="interior" href="../en/expertise.html#interior"><span class="display d-m">Interior design</span><p class="muted">Do the rooms, materials and light suit the way the space will be used?</p></a></div>
 </section>
-<div class="float-img" aria-hidden="true"><img src="../assets/img/maresvista-1.webp" data-key="home" alt="" loading="lazy"><img src="../assets/img/apartments-day.webp" data-key="rental" alt="" loading="lazy"><img src="../assets/img/hotel-dusk.webp" data-key="hospitality" alt="" loading="lazy"><img src="../assets/img/estate-dusk.webp" data-key="estate" alt="" loading="lazy"></div>
+<div class="float-img" aria-hidden="true"><img src="../assets/img/maresvista-1.webp" data-key="home" alt="" loading="lazy"><img src="../assets/img/apartments-day.webp" data-key="rental" alt="" loading="lazy"><img src="../assets/img/hotel-dusk.webp" data-key="hospitality" alt="" loading="lazy"><img src="../assets/img/estate-dusk.webp" data-key="estate" alt="" loading="lazy"><img src="../assets/img/resort-6.webp" data-key="interior" alt="" loading="lazy"></div>
 
-<section class="section wrap">
-  <div class="remote">
-    <div>
-      <span class="eyebrow">Living abroad or in another city?</span>
-      <h2 class="display d-l" style="margin-top:10px" data-lines>Your site, in your pocket.</h2>
-      <ul>
-        <li>A dated photo report every week</li>
-        <li>Video walkthroughs of the site on request</li>
-        <li>Every plan, permit and contract in one shared folder</li>
-        <li>Your approval before each stage moves forward</li>
-      </ul>
+<section class="wrap path" id="process" data-path>
+  <div class="path-intro">
+    <span class="eyebrow">How it works</span>
+    <h2 class="display d-m" data-lines>It all starts with a free 30-minute call.</h2>
+    <p class="lede" data-reveal>Talk your project through with an architect, at no cost. If it makes sense to go further, six clear stages take you from the plot to the handover, with one team beside you.</p>
+    <div class="path-visual">
+      <svg class="iso path-iso" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on" data-from="1" data-until="6"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-shadow on" data-from="6" data-until="6"><polygon points="74,130 120,154 84,172 38,148"/></g><g class="f iso-mask on" data-from="2" data-until="6"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on" data-from="2" data-until="6"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on" data-from="3" data-until="6"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="d iso-sun" data-from="4" data-until="5"><path pathLength="1" d="M24 44a16 16 0 1 0 32 0a16 16 0 1 0-32 0M32 44l6 6 11-12"/></g><g class="d" data-from="5" data-until="5"><path pathLength="1" d="M190 130V26M160 36H226M190 26 168 36M190 26 214 36M172 36V58M168 58H176"/></g><g class="f iso-lit on" data-from="6" data-until="6"><polygon points="82,118.2 94,124.4 94,134.4 82,128.2"/><polygon points="82,96.2 94,102.4 94,112.4 82,106.2"/><polygon points="82,74.2 94,80.4 94,90.4 82,84.2"/><polygon points="100,127.6 112,133.8 112,143.8 100,137.6"/><polygon points="100,105.6 112,111.8 112,121.8 100,115.6"/><polygon points="100,83.6 112,89.8 112,99.8 100,93.6"/><polygon points="128,133.8 140,127.6 140,137.6 128,143.8"/><polygon points="128,111.8 140,105.6 140,115.6 128,121.8"/><polygon points="128,89.8 140,83.6 140,93.6 128,99.8"/><polygon points="146,124.4 158,118.2 158,128.2 146,134.4"/><polygon points="146,102.4 158,96.2 158,106.2 146,112.4"/><polygon points="146,80.4 158,74.2 158,84.2 146,90.4"/></g><g class="f iso-lit on" data-from="6" data-until="6"><circle cx="212" cy="30" r="10"/></g><g class="f iso-tree on" data-from="6" data-until="6"><circle cx="56" cy="124" r="5"/><circle cx="184" cy="136" r="6"/><circle cx="170" cy="150" r="4"/></g></svg>
+      <span class="path-now" aria-hidden="true">From the plot to the handover</span>
     </div>
-    <div class="phone" data-reveal aria-label="Example of a site update">
-      <span class="example-tag">Example</span>
-      <div class="phone-screen">
-        <div class="phone-top"><b>MMA</b><span>Your project</span></div>
-        <div class="bubble"><img src="../assets/img/estate-2.webp" alt="" loading="lazy">Week 12: first-floor slab poured. Next, second-floor walls.</div>
-        <div class="bubble">Your choice needed: window frame finish, by Friday.</div>
-        <div class="bubble me">Approved. Let's go with the bronze.</div>
+    <div class="path-cta" data-reveal><a class="btn " href="https://wa.me/212661225067?text=Hello%20MMA%2C%20I%20would%20like%20to%20book%20the%20free%2030-minute%20discovery%20call." target="_blank" rel="noopener">Book my free call <span class="arr" aria-hidden="true">&rarr;</span></a><a class="link" href="../en/contact.html">Or write your brief first</a></div>
+    <ul class="path-perks"><li>30 minutes</li><li>Free</li><li>No obligation</li></ul>
+  </div>
+  <div class="path-flow">
+    <div class="path-call" data-reveal>
+      <div class="dial" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><circle class="dial-ticks" cx="60" cy="60" r="54" pathLength="60"/><circle class="dial-arc" cx="60" cy="60" r="54" pathLength="60"/></svg>
+        <div class="dial-n"><strong data-count="30">30</strong><small>min</small></div>
+      </div>
+      <div>
+        <span class="eyebrow">Where it all starts</span>
+        <h3 class="display d-s">Your free discovery call</h3>
+        <ul class="path-agenda"><li>Tell us about your plot, your goal and your budget</li><li>Get an architect's first read of your project</li><li>Leave knowing the right next step</li></ul>
       </div>
     </div>
-  </div>
-</section>
-<section class="final">
-  <img src="../assets/img/maresvista-3.webp" alt="" loading="lazy" data-parallax="5">
-  <div class="final-body">
-    <h2 class="display d-l" data-lines>Bring us the plot. We'll show you what it can become.</h2>
-    <div class="btn-row" data-reveal><a class="btn " href="../en/contact.html">Start your project <span class="arr" aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="../en/plot-lab.html">Test it in 3D first <span class="arr" aria-hidden="true">&rarr;</span></a></div>
+    <h3 class="display d-m path-sub" data-lines>Then six stages, one team.</h3>
+    <div class="path-track"><span class="path-fill" aria-hidden="true"></span><ol class="path-steps"><li class="path-step" data-now="Stage 1 of 6 · Feasibility">
+      <span class="path-n" aria-hidden="true">1</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on new"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g></svg>
+      <div class="path-body">
+        <h4>Feasibility</h4>
+        <p class="path-hook">Know what your plot can really hold.</p>
+        <p class="path-desc">We read the planning rules and test what the plot can really hold, before you commit further.</p>
+        <p class="path-get"><span>You get</span>A clear feasibility study</p>
+      </div>
+    </li><li class="path-step" data-now="Stage 2 of 6 · Concept">
+      <span class="path-n" aria-hidden="true">2</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on new"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on new"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g></svg>
+      <div class="path-body">
+        <h4>Concept</h4>
+        <p class="path-hook">See it before you decide.</p>
+        <p class="path-desc">Layouts, volumes and 3D views you can compare and react to.</p>
+        <p class="path-get"><span>You get</span>3D options to compare</p>
+      </div>
+    </li><li class="path-step" data-now="Stage 3 of 6 · Developed design">
+      <span class="path-n" aria-hidden="true">3</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on new"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g></svg>
+      <div class="path-body">
+        <h4>Developed design</h4>
+        <p class="path-hook">Your choice, made precise.</p>
+        <p class="path-desc">The chosen concept, measured and coordinated: plans, sections, façades, materials.</p>
+        <p class="path-get"><span>You get</span>A coordinated set of drawings</p>
+      </div>
+    </li><li class="path-step" data-now="Stage 4 of 6 · Building permit">
+      <span class="path-n" aria-hidden="true">4</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="d iso-sun on new"><path pathLength="1" d="M24 44a16 16 0 1 0 32 0a16 16 0 1 0-32 0M32 44l6 6 11-12"/></g></svg>
+      <div class="path-body">
+        <h4>Building permit</h4>
+        <p class="path-hook">We handle the paperwork.</p>
+        <p class="path-desc">We prepare and file the application, then follow it with the authorities.</p>
+        <p class="path-get"><span>You get</span>An application filed and followed</p>
+      </div>
+    </li><li class="path-step" data-now="Stage 5 of 6 · Contractors">
+      <span class="path-n" aria-hidden="true">5</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="d iso-sun on"><path pathLength="1" d="M24 44a16 16 0 1 0 32 0a16 16 0 1 0-32 0M32 44l6 6 11-12"/></g><g class="d on new"><path pathLength="1" d="M190 130V26M160 36H226M190 26 168 36M190 26 214 36M172 36V58M168 58H176"/></g></svg>
+      <div class="path-body">
+        <h4>Contractors</h4>
+        <p class="path-hook">Compare like with like.</p>
+        <p class="path-desc">Construction documents and comparable quotes, with a clear recommendation.</p>
+        <p class="path-get"><span>You get</span>Comparable quotes and a recommendation</p>
+      </div>
+    </li><li class="path-step" data-now="Stage 6 of 6 · Site supervision">
+      <span class="path-n" aria-hidden="true">6</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-shadow on new"><polygon points="74,130 120,154 84,172 38,148"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="f iso-lit on new"><polygon points="82,118.2 94,124.4 94,134.4 82,128.2"/><polygon points="82,96.2 94,102.4 94,112.4 82,106.2"/><polygon points="82,74.2 94,80.4 94,90.4 82,84.2"/><polygon points="100,127.6 112,133.8 112,143.8 100,137.6"/><polygon points="100,105.6 112,111.8 112,121.8 100,115.6"/><polygon points="100,83.6 112,89.8 112,99.8 100,93.6"/><polygon points="128,133.8 140,127.6 140,137.6 128,143.8"/><polygon points="128,111.8 140,105.6 140,115.6 128,121.8"/><polygon points="128,89.8 140,83.6 140,93.6 128,99.8"/><polygon points="146,124.4 158,118.2 158,128.2 146,134.4"/><polygon points="146,102.4 158,96.2 158,106.2 146,112.4"/><polygon points="146,80.4 158,74.2 158,84.2 146,90.4"/></g><g class="f iso-lit on new"><circle cx="212" cy="30" r="10"/></g><g class="f iso-tree on new"><circle cx="56" cy="124" r="5"/><circle cx="184" cy="136" r="6"/><circle cx="170" cy="150" r="4"/></g></svg>
+      <div class="path-body">
+        <h4>Site supervision</h4>
+        <p class="path-hook">What was drawn gets built.</p>
+        <p class="path-desc">Regular visits and reports through to handover.</p>
+        <p class="path-get"><span>You get</span>Reports through to handover</p>
+      </div>
+    </li></ol></div>
+    <p class="lede path-note" data-reveal>You approve each stage before the next begins. You can start with the feasibility study alone, then decide.</p>
+    <div class="path-end" data-reveal>
+      <p class="display d-s">The first step takes 30 minutes and costs nothing.</p>
+      <a class="btn ink" href="https://wa.me/212661225067?text=Hello%20MMA%2C%20I%20would%20like%20to%20book%20the%20free%2030-minute%20discovery%20call." target="_blank" rel="noopener">Book my free call <span class="arr" aria-hidden="true">&rarr;</span></a>
+    </div>
   </div>
 </section>
 
@@ -170,18 +243,18 @@
     <div><img class="foot-logo" src="../assets/logo-full-white.png" alt="MMA, Mharrech Mribah Architects" loading="lazy"></div>
     <div><h4>Explore</h4><ul><li><a href="../en/projects.html">Projects</a></li><li><a href="../en/plot-lab.html">Plot Lab</a></li><li><a href="../en/expertise.html">Expertise</a></li><li><a href="../en/studio.html">Studio</a></li></ul></div>
     <div><h4>Talk to us</h4><ul>
-      <li><a href="tel:+212661225067">06 61 22 50 67</a></li>
-      <li><a href="tel:+212633931542">06 33 93 15 42</a></li>
+      <li><a href="tel:+212661225067"><span dir="ltr">06 61 22 50 67</span></a></li>
+      <li><a href="tel:+212633931542"><span dir="ltr">06 33 93 15 42</span></a></li>
       <li><a href="https://wa.me/212661225067?text=Hello%20MMA%2C%20I%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener">WhatsApp</a></li>
     </ul></div>
     <div><h4>Studio</h4><ul><li>Tangier, Morocco</li><li><a href="../en/contact.html">Start a project</a></li></ul></div>
   </div>
-  <div class="foot-end"><span>© 2026 MMA, Mharrech Mribah Architects</span><span>Images are design visualizations.</span></div>
+  <div class="foot-end"><span dir="ltr">© 2026 MMA, Mharrech Mribah Architects</span><span>Images are design visualizations.</span></div>
 </footer>
 <div class="dock">
   <div class="dock-menu">
     <a href="https://wa.me/212661225067?text=Hello%20MMA%2C%20I%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener">WhatsApp</a>
-    <a href="tel:+212661225067">06 61 22 50 67</a>
+    <a href="tel:+212661225067"><span dir="ltr">06 61 22 50 67</span></a>
     <a href="../en/contact.html">Start a project</a>
   </div>
   <button class="dock-btn" type="button" aria-expanded="false" aria-label="Talk to an architect"><i></i><span>Talk to an architect</span></button>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plot Lab · MMA Architects</title>
+<meta name="description" content="جرّبوا أرضكم بالأبعاد الثلاثية: الحجم والشمس والمساحة وميزانية أولية.">
+<meta name="theme-color" content="#0B1A1F">
+<link rel="alternate" hreflang="fr" href="../fr/plot-lab.html">
+<link rel="alternate" hreflang="en" href="../en/plot-lab.html">
+<link rel="alternate" hreflang="es" href="../es/plot-lab.html">
+<link rel="alternate" hreflang="x-default" href="../fr/plot-lab.html">
+<link rel="icon" href="../assets/logo-mma-white.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:SHRP,wght@0..100,200..600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Noto+Kufi+Arabic:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/site.css">
+<script>document.documentElement.classList.add('js')</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+
+</head>
+<body>
+<a class="skip" href="#main">الانتقال إلى المحتوى</a>
+<div class="wipe" aria-hidden="true"><img src="../assets/logo-mma-white.png" alt=""></div>
+<header class="head">
+  <a class="logo" href="../ar/index.html"><img src="../assets/logo-mma-white.png" alt="MMA, Mharrech Mribah Architects" width="500" height="172"></a>
+  <nav class="nav" aria-label="القائمة الرئيسية">
+    <a href="../ar/projects.html">المشاريع</a><a href="../ar/plot-lab.html" aria-current=page>Plot Lab</a><a href="../ar/expertise.html">الخبرات</a><a href="../ar/studio.html">المكتب</a>
+    <div class="lang" role="group" aria-label="اللغة"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><span aria-current="true" aria-label="العربية">عربي</span><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
+    <a class="btn" href="../ar/contact.html">ابدأوا مشروعًا</a>
+    <button class="menu-btn" type="button" aria-label="القائمة" aria-expanded="false"><span></span><span></span></button>
+  </nav>
+</header>
+<div class="mobile-menu">
+  <a class="display" href="../ar/projects.html">المشاريع</a><a class="display" href="../ar/plot-lab.html">Plot Lab</a><a class="display" href="../ar/expertise.html">الخبرات</a><a class="display" href="../ar/studio.html">المكتب</a>
+  <a class="display" href="../ar/contact.html">ابدأوا مشروعًا</a>
+  <div class="lang" role="group" aria-label="اللغة"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><span aria-current="true" aria-label="العربية">عربي</span><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
+</div>
+<main id="main">
+
+<section class="lab" id="labRoot">
+  <div class="lab-stage">
+    <div class="lab-canvas" aria-label="نموذج ثلاثي الأبعاد للمبنى على القطعة الأرضية. اسحبوا لتدويره."></div>
+    <div class="lab-title">
+      <h1 class="display d-l" data-lines>Plot Lab</h1>
+      <p style="margin-top:6px;max-width:27em">شكّلوا فكرة أولية عن مشروعكم، ثم أرسلوها إلى المهندسين المعماريين.</p>
+    </div>
+    <p class="lab-hint">اسحبوا للتدوير · مرّروا أو اقرصوا للتكبير</p>
+  </div>
+  <aside class="lab-panel" aria-label="أدوات التحكم في الدراسة">
+    <div class="seg" role="group" aria-label="نوع المشروع"><button type="button" data-program="villa">فيلا</button><button type="button" data-program="apartments">شقق</button><button type="button" data-program="hotel">فندق</button></div>
+    <div class="ctl"><label for="labArea"><span>مساحة القطعة الأرضية</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
+    <div class="ctl"><label for="labCover"><span>نسبة البناء على القطعة الأرضية</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"></div>
+    <div class="ctl"><label for="labFloors"><span>الطوابق</span><output id="outFloors"></output></label><input id="labFloors" type="range" step="1"></div>
+    <div class="ctl"><label for="labHour"><span>وقت اليوم</span><output id="outHour"></output></label><input id="labHour" type="range" min="6" max="21" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">تشغيل اليوم</button></div>
+    <div class="seg" role="group" aria-label="مستوى التشطيب"><button type="button" data-finish="standard">عادي</button><button type="button" data-finish="premium">ممتاز</button><button type="button" data-finish="highend">راقٍ</button></div>
+    <div class="lab-res" aria-live="polite">
+      <div><span>المساحة المبنية</span><strong id="resFloor"></strong></div>
+      <div><span>السعة التقديرية</span><strong id="resCap"></strong></div>
+      <div class="wide"><span>ميزانية أولية، دون احتساب الأرض</span><strong id="resBudget"></strong></div>
+    </div>
+    <div class="lab-actions">
+      <a class="btn" id="labSend" href="../ar/contact.html">أرسلوا هذه الدراسة إلى MMA <span class="arr" aria-hidden="true">&rarr;</span></a>
+      <button class="mini" id="labSave" type="button">حفظ الخيار</button>
+      <button class="mini" id="labShare" type="button">نسخ الرابط</button>
+    </div>
+    <p class="note">للتوضيح فقط، بأسعار نموذجية ستؤكدها MMA. تحدد قواعد التعمير الخاصة بأرضكم الحدود الفعلية. تُحتسب السعة على أساس 85 م² للشقة و40 م² للغرفة. موقع الشمس تقريبي.</p>
+  </aside>
+</section>
+<section class="section wrap white hide" id="labCompare" style="padding-block:clamp(40px,6vw,90px)">
+  <h2 class="display d-m" style="margin-bottom:22px">خياراتكم جنبًا إلى جنب.</h2>
+  <div class="table-scroll"><table class="compare-table"><thead><tr><th scope=col>الخيار</th><th scope=col>النوع</th><th scope=col>القطعة الأرضية</th><th scope=col>نسبة البناء</th><th scope=col>الطوابق</th><th scope=col>المساحة المبنية</th><th scope=col>السعة</th><th scope=col>التشطيب</th><th scope=col>الميزانية (درهم)</th><th scope=col></th></tr></thead><tbody id="labCompareBody"></tbody></table></div>
+</section>
+<section class="final">
+  <img src="../assets/img/tower-3.webp" alt="" loading="lazy" data-parallax="5">
+  <div class="final-body">
+    <h2 class="display d-l" data-lines>أحضروا القطعة الأرضية، وسنريكم ما يمكن أن تصبح عليه.</h2>
+    <div class="btn-row" data-reveal><a class="btn " href="../ar/contact.html">ابدأوا مشروعكم <span class="arr" aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="../ar/plot-lab.html">جرّبوها أولًا بالأبعاد الثلاثية <span class="arr" aria-hidden="true">&rarr;</span></a></div>
+  </div>
+</section>
+
+</main>
+<footer class="foot">
+  <div class="foot-grid">
+    <div><img class="foot-logo" src="../assets/logo-full-white.png" alt="MMA, Mharrech Mribah Architects" loading="lazy"></div>
+    <div><h4>استكشفوا</h4><ul><li><a href="../ar/projects.html">المشاريع</a></li><li><a href="../ar/plot-lab.html">Plot Lab</a></li><li><a href="../ar/expertise.html">الخبرات</a></li><li><a href="../ar/studio.html">المكتب</a></li></ul></div>
+    <div><h4>تحدثوا إلينا</h4><ul>
+      <li><a href="tel:+212661225067"><span dir="ltr">+212 661 22 50 67</span></a></li>
+      <li><a href="tel:+212633931542"><span dir="ltr">+212 633 93 15 42</span></a></li>
+      <li><a href="https://wa.me/212661225067?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%20MMA%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%AA%D8%AD%D8%AF%D8%AB%20%D8%B9%D9%86%20%D9%85%D8%B4%D8%B1%D9%88%D8%B9." target="_blank" rel="noopener">WhatsApp</a></li>
+    </ul></div>
+    <div><h4>المكتب</h4><ul><li>طنجة، المغرب</li><li><a href="../ar/contact.html">ابدأوا مشروعًا</a></li></ul></div>
+  </div>
+  <div class="foot-end"><span dir="ltr">© 2026 MMA, Mharrech Mribah Architects</span><span>الصور عبارة عن تصورات للمشروع.</span></div>
+</footer>
+<div class="dock">
+  <div class="dock-menu">
+    <a href="https://wa.me/212661225067?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%20MMA%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%AA%D8%AD%D8%AF%D8%AB%20%D8%B9%D9%86%20%D9%85%D8%B4%D8%B1%D9%88%D8%B9." target="_blank" rel="noopener">WhatsApp</a>
+    <a href="tel:+212661225067"><span dir="ltr">+212 661 22 50 67</span></a>
+    <a href="../ar/contact.html">ابدأوا مشروعًا</a>
+  </div>
+  <button class="dock-btn" type="button" aria-expanded="false" aria-label="تحدثوا إلى مهندس معماري"><i></i><span>تحدثوا إلى مهندس معماري</span></button>
+</div>
+<div class="cursor" aria-hidden="true"></div>
+<script>window.MMA_I18N={"lab": {"rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]}, "ground": "أرضي", "units": "شقة", "rooms": "غرفة", "oneVilla": "فيلا واحدة", "play": "تشغيل اليوم", "pause": "إيقاف مؤقت", "share": "نسخ الرابط", "copied": "تم نسخ الرابط", "linkInBar": "الرابط في شريط العنوان", "save": "حفظ الخيار", "saved": "تم الحفظ", "option": "الخيار", "remove": "حذف", "programs": {"villa": "فيلا", "apartments": "شقق", "hotel": "فندق"}, "finishes": {"standard": "عادي", "premium": "ممتاز", "highend": "راقٍ"}, "contactUrl": "../ar/contact.html", "locale": "en-GB", "m2": "م²", "mad": "درهم", "noGl": "العرض ثلاثي الأبعاد غير متاح في هذا المتصفح. يمكنكم مع ذلك استخدام أدوات التحكم لرؤية الأرقام."}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="../js/site.js"></script>
+<script type="module">import {mountLab} from '../js/lab.js';mountLab(document.getElementById('labRoot'));</script>
+</body>
+</html>

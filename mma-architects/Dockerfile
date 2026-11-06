@@ -7,6 +7,9 @@ COPY css /usr/share/nginx/html/css
 COPY js /usr/share/nginx/html/js
 COPY en /usr/share/nginx/html/en
 COPY fr /usr/share/nginx/html/fr
+COPY es /usr/share/nginx/html/es
+COPY ar /usr/share/nginx/html/ar
+COPY zh /usr/share/nginx/html/zh
 
 EXPOSE 80
 

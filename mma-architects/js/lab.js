@@ -335,12 +335,12 @@ export function mountLab(root) {
 
   let scene = null;
   try {
-    scene = createScene($('.lab-canvas'), { offsetX: w => (w > 1040 ? Math.min(w * .13, 200) : 0), zoom: 2 });
+    scene = createScene($('.lab-canvas'), { offsetX: w => (w > 1040 ? Math.min(w * .13, 200) * (document.documentElement.dir === 'rtl' ? -1 : 1) : 0), zoom: 2 });
   } catch (e) {
     $('.lab-canvas').innerHTML = `<p class="lab-hint">${I.noGl}</p>`;
   }
 
-  const loc = document.documentElement.lang === 'fr' ? 'fr-FR' : 'en-GB';
+  const loc = I.locale;
   const fmt = n => Math.round(n).toLocaleString(loc);
   const money = n => fmt(Math.round(n / 1e4) * 1e4);
   const hourTxt = h => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.round((h % 1) * 60)).padStart(2, '0')}`;
@@ -365,18 +365,18 @@ export function mountLab(root) {
   function render() {
     Object.keys(inputs).forEach(k => { inputs[k].value = state[k]; });
     const c = calc();
-    $('#outArea').textContent = `${fmt(state.area)} m²`;
+    $('#outArea').textContent = `${fmt(state.area)} ${I.m2}`;
     $('#outCover').textContent = `${state.cover} %`;
     $('#outFloors').textContent = levels(state.floors);
     $('#outHour').textContent = hourTxt(state.hour);
-    $('#resFloor').textContent = `${fmt(c.total)} m²`;
+    $('#resFloor').textContent = `${fmt(c.total)} ${I.m2}`;
     $('#resCap').textContent = c.cap;
-    $('#resBudget').textContent = `${money(c.budgetLo)} – ${money(c.budgetHi)} MAD`;
+    $('#resBudget').textContent = `${money(c.budgetLo)} – ${money(c.budgetHi)} ${I.mad}`;
     root.querySelectorAll('[data-program]').forEach(b => b.setAttribute('aria-pressed', b.dataset.program === state.program));
     root.querySelectorAll('[data-finish]').forEach(b => b.setAttribute('aria-pressed', b.dataset.finish === state.finish));
     if (scene) scene.setState(state);
     const type = { villa: 'home', apartments: 'rental', hotel: 'hospitality' }[state.program];
-    const study = `${fmt(state.area)} m², ${state.cover} %, ${levels(state.floors)}, ${fmt(c.total)} m²`;
+    const study = `${fmt(state.area)} ${I.m2}, ${state.cover} %, ${levels(state.floors)}, ${fmt(c.total)} ${I.m2}`;
     $('#labSend').href = `${I.contactUrl}?type=${type}&study=${encodeURIComponent(study)}`;
   }
   function setLimits() {
@@ -426,7 +426,7 @@ export function mountLab(root) {
     body.textContent = '';
     saved.forEach((o, i) => {
       const c = calc(o), tr = document.createElement('tr');
-      [`${I.option} ${String.fromCharCode(65 + i)}`, I.programs[o.program], `${fmt(o.area)} m²`, `${o.cover} %`, levels(o.floors), `${fmt(c.total)} m²`, c.cap, I.finishes[o.finish], `${money(c.budgetLo)} – ${money(c.budgetHi)}`].forEach(t => {
+      [`${I.option} ${String.fromCharCode(65 + i)}`, I.programs[o.program], `${fmt(o.area)} ${I.m2}`, `${o.cover} %`, levels(o.floors), `${fmt(c.total)} ${I.m2}`, c.cap, I.finishes[o.finish], `${money(c.budgetLo)} – ${money(c.budgetHi)}`].forEach(t => {
         const td = document.createElement('td'); td.textContent = t; tr.append(td);
       });
       const td = document.createElement('td'), del = document.createElement('button');

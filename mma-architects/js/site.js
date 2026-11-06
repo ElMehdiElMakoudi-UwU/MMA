@@ -8,6 +8,8 @@
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const motion = hasGsap && !reduce;
+  /* Horizontal scenes travel the other way in right-to-left pages */
+  const travel = root.dir === 'rtl' ? 1 : -1;
   if (!motion) root.classList.add('no-motion');
 
   /* Smooth scrolling */
@@ -124,13 +126,6 @@
         onUpdate: () => { el.textContent = Math.round(o.v).toLocaleString(fmt) + unit; } });
     });
 
-    /* Word-by-word statement */
-    $$('.statement').forEach(el => {
-      el.innerHTML = el.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
-      gsap.to($$('.w', el), { opacity: 1, stagger: .4, ease: 'none',
-        scrollTrigger: { trigger: el, start: 'top 78%', end: 'bottom 45%', scrub: .4 } });
-    });
-
     /* Marquee */
     $$('.marquee-track').forEach(t => {
       t.innerHTML += t.innerHTML;
@@ -141,64 +136,39 @@
       } });
     });
 
-    /* Pinned plot story */
-    const story = $('.story');
-    if (story) {
-      const frames = $$('.story-frames img', story), steps = $$('.story-step', story);
-      const num = $('.story-num b', story), bars = $$('.story-progress i', story);
-      const from = Number(num.dataset.from), to = Number(num.dataset.to), loc = num.dataset.locale;
-      const n = steps.length;
-      if (innerWidth > 1040) {
-        ScrollTrigger.create({
-          trigger: story, start: 'top top', end: () => '+=' + innerHeight * (n * .85), pin: '.story-pin', scrub: true, anticipatePin: 1,
-          onUpdate: s => {
-            const raw = s.progress * (n - .001), i = Math.floor(raw), f = raw - i;
-            steps.forEach((st, k) => {
-              const on = k === i;
-              gsap.set(st, { opacity: on ? 1 : 0, y: on ? 0 : 14 });
-            });
-            frames.forEach((fr, k) => {
-              let op = 0;
-              if (k === i) op = 1;
-              if (k === i + 1) op = Math.max(0, (f - .78) / .22);
-              gsap.set(fr, { opacity: op, zIndex: k === i + 1 ? 2 : 1 });
-            });
-            const shrink = gsap.utils.clamp(0, 1, s.progress / .42);
-            num.textContent = Math.round(from + (to - from) * gsap.parseEase('power2.inOut')(shrink)).toLocaleString(loc);
-            bars.forEach((b, k) => b.style.setProperty('--p', gsap.utils.clamp(0, 1, raw - k)));
-          }
-        });
-      } else {
-        /* Phones step automatically as the section enters view, without pinning */
-        let i = 0;
-        const show = k => {
-          steps.forEach((st, j) => gsap.to(st, { opacity: j === k ? 1 : 0, duration: .5 }));
-          frames.forEach((fr, j) => gsap.to(fr, { opacity: j === k ? 1 : 0, duration: .7 }));
-          bars.forEach((b, j) => b.style.setProperty('--p', j <= k ? 1 : 0));
-          const v = k === 0 ? from : to;
-          gsap.to({ v: Number(num.textContent.replace(/\D/g, '')) || from }, { v, duration: 1, onUpdate() { num.textContent = Math.round(this.targets()[0].v).toLocaleString(loc); } });
-        };
-        ScrollTrigger.create({ trigger: story, start: 'top 60%', once: true, onEnter: () => {
-          show(0);
-          setInterval(() => { i = (i + 1) % n; show(i); }, 3600);
-        } });
-      }
-    }
-
     /* Horizontal rails */
     $$('[data-rail]').forEach(wrap => {
       const rail = $('.rail', wrap);
       if (!rail || !wide()) return;
       const dist = () => Math.max(0, rail.scrollWidth - innerWidth);
-      gsap.to(rail, { x: () => -dist(), ease: 'none',
+      gsap.to(rail, { x: () => travel * dist(), ease: 'none',
         scrollTrigger: { trigger: wrap, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 } });
     });
     const stages = $('.stages-pin');
     if (stages && wide()) {
       const tr = $('.stages-track', stages);
       const dist = () => Math.max(0, tr.scrollWidth - innerWidth);
-      gsap.to(tr, { x: () => -dist(), ease: 'none',
+      gsap.to(tr, { x: () => travel * dist(), ease: 'none',
         scrollTrigger: { trigger: stages, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 1, invalidateOnRefresh: true } });
+    }
+
+    /* Process section: the building is drawn stage by stage as the steps scroll past */
+    const path = $('[data-path]');
+    if (path) {
+      const steps = $$('.path-step', path), layers = $$('.path-iso [data-from]', path);
+      const now = $('.path-now', path), startLabel = now ? now.textContent : '';
+      const setStage = n => {
+        steps.forEach((s, i) => { s.classList.toggle('lit', i < n); s.classList.toggle('now', i === n - 1); });
+        layers.forEach(l => l.classList.toggle('on', n >= +l.dataset.from && n <= +l.dataset.until));
+        if (now) now.textContent = n ? steps[n - 1].dataset.now : startLabel;
+      };
+      setStage(0);
+      steps.forEach((s, i) => ScrollTrigger.create({ trigger: s, start: 'top 62%',
+        onEnter: () => setStage(i + 1), onLeaveBack: () => setStage(i) }));
+      gsap.fromTo('.path-fill', { scaleY: 0 }, { scaleY: 1, ease: 'none',
+        scrollTrigger: { trigger: '.path-steps', start: 'top 62%', end: 'bottom 62%', scrub: .4 } });
+      ScrollTrigger.create({ trigger: '.dial', start: 'top 90%', once: true,
+        onEnter: () => $('.dial', path).classList.add('in') });
     }
 
     /* Day and night slider moves itself once to show it can be dragged */

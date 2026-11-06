@@ -7,6 +7,10 @@
 <meta name="description" content="Cabinet d&#x27;architecture pour celles et ceux qui investissent dans l&#x27;immobilier au Maroc.">
 <meta name="theme-color" content="#0B1A1F">
 <link rel="alternate" hreflang="en" href="../en/index.html">
+<link rel="alternate" hreflang="es" href="../es/index.html">
+<link rel="alternate" hreflang="ar" href="../ar/index.html">
+<link rel="alternate" hreflang="zh" href="../zh/index.html">
+<link rel="alternate" hreflang="x-default" href="../fr/index.html">
 <link rel="icon" href="../assets/logo-mma-white.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +27,7 @@
   <a class="logo" href="../fr/index.html"><img src="../assets/logo-mma-white.png" alt="MMA, Mharrech Mribah Architects" width="500" height="172"></a>
   <nav class="nav" aria-label="Principal">
     <a href="../fr/projects.html">Projets</a><a href="../fr/plot-lab.html">Plot Lab</a><a href="../fr/expertise.html">Expertise</a><a href="../fr/studio.html">Studio</a>
-    <span class="lang"><a href="../en/index.html" hreflang="en">EN</a></span>
+    <div class="lang" role="group" aria-label="Langue"><span aria-current="true" aria-label="Français">FR</span><a href="../en/index.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/index.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/index.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
     <a class="btn" href="../fr/contact.html">Lancer un projet</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
   </nav>
@@ -31,7 +35,7 @@
 <div class="mobile-menu">
   <a class="display" href="../fr/projects.html">Projets</a><a class="display" href="../fr/plot-lab.html">Plot Lab</a><a class="display" href="../fr/expertise.html">Expertise</a><a class="display" href="../fr/studio.html">Studio</a>
   <a class="display" href="../fr/contact.html">Lancer un projet</a>
-  <div class="btn-row"><a class="link" href="../en/index.html" hreflang="en">English</a></div>
+  <div class="lang" role="group" aria-label="Langue"><span aria-current="true" aria-label="Français">FR</span><a href="../en/index.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/index.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/index.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
 </div>
 <main id="main">
 
@@ -51,21 +55,30 @@
 
 <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>27 024 m² <small>plus grand projet</small></span><span>180 <small>appartements dans un immeuble</small></span><span>4 étoiles <small>hôtel à Chefchaouen</small></span><span>2 min <small>de la gare TGV</small></span><span>8 projets <small>dans la sélection</small></span></div></div>
 
-<section class="section wrap">
-  <p class="display statement">Les décisions qui font gagner ou perdre le plus d'argent se prennent avant le premier mur. Ce que le terrain permet. Ce que le bâtiment peut contenir. Ce qu'on y ressentira en y vivant, en y séjournant ou en l'achetant. Nous rendons ces décisions visibles, tant qu'elles peuvent encore changer.</p>
-</section>
-
-<section class="story">
-  <div class="story-pin">
-    <div>
-      <span class="eyebrow">Étude de cas · Tanger</span>
-      <p class="display story-num"><b data-from="4604" data-to="1353" data-locale="fr-FR" style="font-weight:300">4 604</b><small>m²</small></p>
-      <div class="story-steps"><div class="story-step"><h3 class="display d-s">Les règles en prennent l&#x27;essentiel</h3><p class="muted">Un terrain de 4 604 m² semblait une évidence. Après application des règles d&#x27;urbanisme, il ne restait que 1 353 m² constructibles. C&#x27;est là que la plupart des projets perdent de l&#x27;argent, avant que personne ne s&#x27;en aperçoive.</p></div><div class="story-step"><h3 class="display d-s">Nous testons le volume</h3><p class="muted">Socle, corps principal et émergence sont testés face aux limites, jusqu&#x27;à ce que le bâtiment justifie sa hauteur sur ce terrain précis.</p></div><div class="story-step"><h3 class="display d-s">Chaque étage est dessiné pour servir</h3><p class="muted">Appartement après appartement, l&#x27;étage est dessiné pour que ce que vous pouvez vendre ou louer corresponde à ce que vous pouvez construire.</p></div><div class="story-step"><h3 class="display d-s">Un terrain contraint devient une adresse</h3><p class="muted">À deux minutes à pied de la gare Tanger Ville, la contrainte est devenue l&#x27;identité du bâtiment.</p></div></div>
-      <div class="story-progress" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      <p style="margin-top:18px"><a class="link" href="../fr/projects/residential-tower-tangier.html">Voir le projet complet</a></p>
-    </div>
-    <div class="story-frames"><img src="../assets/img/tower-d1.webp" alt="" loading="lazy"><img src="../assets/img/tower-d3.webp" alt="" loading="lazy"><img src="../assets/img/tower-plan.webp" alt="" loading="lazy"><img src="../assets/img/tower-1.webp" alt="" loading="lazy" class=full></div>
-  </div>
+<section class="section wrap before-wall">
+  <h2 class="display d-l" data-lines>L'argent se gagne ou se perd avant le premier mur.</h2>
+  <ol class="bw-steps">
+    <li data-reveal>
+      <svg class="bw-draw" viewBox="0 0 200 130" aria-hidden="true"><polygon points="100,30 185,75 100,120 15,75"/><polygon class="bw-sun" stroke-dasharray="4 4" points="100,55 138,75 100,95 62,75"/></svg>
+      <span class="bw-axis" aria-hidden="true"></span>
+      <div><h3 class="display d-s">Le terrain</h3><p class="muted">Ce qu'il permet</p></div>
+    </li>
+    <li data-reveal>
+      <svg class="bw-draw" viewBox="0 0 200 130" aria-hidden="true"><polygon class="bw-faint" points="100,30 185,75 100,120 15,75"/><path class="bw-sun" d="M100 10 138 30 100 50 62 30Z M62 30V75L100 95V50M138 30V75L100 95"/><path d="M62 45 100 65 138 45M62 60 100 80 138 60"/></svg>
+      <span class="bw-axis" aria-hidden="true"></span>
+      <div><h3 class="display d-s">Le bâtiment</h3><p class="muted">Ce qu'il peut contenir</p></div>
+    </li>
+    <li data-reveal>
+      <svg class="bw-draw" viewBox="0 0 200 130" aria-hidden="true"><polygon class="bw-faint" points="100,30 185,75 100,120 15,75"/><polygon class="bw-shadow" points="62,75 100,95 80,105 42,85"/><path d="M100 10 138 30 100 50 62 30Z M62 30V75L100 95V50M138 30V75L100 95"/><polygon class="bw-lit" points="110,57 128,47.5 128,57.5 110,67"/><circle class="bw-lit" cx="172" cy="22" r="9"/></svg>
+      <span class="bw-axis" aria-hidden="true"></span>
+      <div><h3 class="display d-s">Le ressenti</h3><p class="muted">Y vivre, y séjourner, l'acheter</p></div>
+    </li>
+    <li class="bw-wall" data-reveal>
+      <span class="bw-block" aria-hidden="true"></span>
+      <div><h3 class="display d-s">Premier mur</h3></div>
+    </li>
+  </ol>
+  <p class="lede bw-note" data-reveal>Nous rendons ces décisions visibles, tant qu'elles peuvent encore changer.</p>
 </section>
 
 <section class="rail-wrap" data-rail>
@@ -73,7 +86,10 @@
     <h2 class="display d-l" data-lines>Projets choisis</h2>
     <a class="link" href="../fr/projects.html">Tous les projets</a>
   </div>
-  <div class="rail"><a class="pcard" href="../fr/projects/hotel-chefchaouen.html" data-type="hospitality" data-cursor="Voir">
+  <div class="rail"><a class="pcard" href="../fr/projects/residential-tower-tangier.html" data-type="apartments" data-cursor="Voir">
+  <div class="pcard-media"><img src="../assets/img/tower-1.webp" alt="Tour résidentielle" loading="lazy" style="view-transition-name:p-residential-tower-tangier"></div>
+  <div class="pcard-info"><h3>Tour résidentielle</h3><span>Tanger · Appartements</span></div>
+</a><a class="pcard" href="../fr/projects/hotel-chefchaouen.html" data-type="hospitality" data-cursor="Voir">
   <div class="pcard-media"><img src="../assets/img/hotel-dusk.webp" alt="Hôtel 4 étoiles" loading="lazy" style="view-transition-name:p-hotel-chefchaouen"></div>
   <div class="pcard-info"><h3>Hôtel 4 étoiles</h3><span>Chefchaouen · Hôtellerie</span></div>
 </a><a class="pcard" href="../fr/projects/180-apartments-tangier.html" data-type="apartments" data-cursor="Voir">
@@ -129,38 +145,95 @@
   <div class="grid" style="margin-bottom:clamp(28px,4vw,60px);align-items:end">
     <h2 class="display d-l" style="grid-column:1/-1" data-lines>Dans quoi investissez-vous ?</h2>
   </div>
-  <div class="types"><a class="type" data-float="home" href="../fr/expertise.html#home"><span class="display d-m">Une villa ou une maison familiale</span><p class="muted">Convient-elle au terrain, à votre budget et à votre façon d&#x27;y vivre ?</p></a><a class="type" data-float="rental" href="../fr/expertise.html#rental"><span class="display d-m">Un immeuble d&#x27;appartements</span><p class="muted">Combien de logements peut-il accueillir, et quels plans se loueront ou se vendront le mieux ?</p></a><a class="type" data-float="hospitality" href="../fr/expertise.html#hospitality"><span class="display d-m">Un hôtel ou une maison d&#x27;hôtes</span><p class="muted">Le site peut-il porter les chambres, les circulations et les services de l&#x27;activité ?</p></a><a class="type" data-float="estate" href="../fr/expertise.html#estate"><span class="display d-m">Un domaine de plusieurs bâtiments</span><p class="muted">Comment plusieurs bâtiments partagent-ils un site en restant intimes ?</p></a></div>
+  <div class="types"><a class="type" data-float="home" href="../fr/expertise.html#home"><span class="display d-m">Une villa ou une maison familiale</span><p class="muted">Convient-elle au terrain, à votre budget et à votre façon d&#x27;y vivre ?</p></a><a class="type" data-float="rental" href="../fr/expertise.html#rental"><span class="display d-m">Un immeuble d&#x27;appartements</span><p class="muted">Combien de logements peut-il accueillir, et quels plans se loueront ou se vendront le mieux ?</p></a><a class="type" data-float="hospitality" href="../fr/expertise.html#hospitality"><span class="display d-m">Un hôtel ou une maison d&#x27;hôtes</span><p class="muted">Le site peut-il porter les chambres, les circulations et les services de l&#x27;activité ?</p></a><a class="type" data-float="estate" href="../fr/expertise.html#estate"><span class="display d-m">Un domaine de plusieurs bâtiments</span><p class="muted">Comment plusieurs bâtiments partagent-ils un site en restant intimes ?</p></a><a class="type" data-float="interior" href="../fr/expertise.html#interior"><span class="display d-m">L&#x27;architecture d&#x27;intérieur</span><p class="muted">Les pièces, les matériaux et la lumière sont-ils adaptés à l&#x27;usage du lieu ?</p></a></div>
 </section>
-<div class="float-img" aria-hidden="true"><img src="../assets/img/maresvista-1.webp" data-key="home" alt="" loading="lazy"><img src="../assets/img/apartments-day.webp" data-key="rental" alt="" loading="lazy"><img src="../assets/img/hotel-dusk.webp" data-key="hospitality" alt="" loading="lazy"><img src="../assets/img/estate-dusk.webp" data-key="estate" alt="" loading="lazy"></div>
+<div class="float-img" aria-hidden="true"><img src="../assets/img/maresvista-1.webp" data-key="home" alt="" loading="lazy"><img src="../assets/img/apartments-day.webp" data-key="rental" alt="" loading="lazy"><img src="../assets/img/hotel-dusk.webp" data-key="hospitality" alt="" loading="lazy"><img src="../assets/img/estate-dusk.webp" data-key="estate" alt="" loading="lazy"><img src="../assets/img/resort-6.webp" data-key="interior" alt="" loading="lazy"></div>
 
-<section class="section wrap">
-  <div class="remote">
-    <div>
-      <span class="eyebrow">Vous vivez à l'étranger ou dans une autre ville ?</span>
-      <h2 class="display d-l" style="margin-top:10px" data-lines>Votre chantier, dans votre poche.</h2>
-      <ul>
-        <li>Un rapport photo daté chaque semaine</li>
-        <li>Des visites vidéo du chantier sur demande</li>
-        <li>Plans, permis et contrats dans un seul dossier partagé</li>
-        <li>Votre validation avant chaque nouvelle étape</li>
-      </ul>
+<section class="wrap path" id="process" data-path>
+  <div class="path-intro">
+    <span class="eyebrow">Comment ça se passe</span>
+    <h2 class="display d-m" data-lines>Tout commence par un appel gratuit de 30 minutes.</h2>
+    <p class="lede" data-reveal>Parlez de votre projet avec un architecte, sans frais. S'il est utile d'aller plus loin, six étapes claires vous mènent du terrain à la réception, avec une seule équipe à vos côtés.</p>
+    <div class="path-visual">
+      <svg class="iso path-iso" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on" data-from="1" data-until="6"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-shadow on" data-from="6" data-until="6"><polygon points="74,130 120,154 84,172 38,148"/></g><g class="f iso-mask on" data-from="2" data-until="6"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on" data-from="2" data-until="6"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on" data-from="3" data-until="6"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="d iso-sun" data-from="4" data-until="5"><path pathLength="1" d="M24 44a16 16 0 1 0 32 0a16 16 0 1 0-32 0M32 44l6 6 11-12"/></g><g class="d" data-from="5" data-until="5"><path pathLength="1" d="M190 130V26M160 36H226M190 26 168 36M190 26 214 36M172 36V58M168 58H176"/></g><g class="f iso-lit on" data-from="6" data-until="6"><polygon points="82,118.2 94,124.4 94,134.4 82,128.2"/><polygon points="82,96.2 94,102.4 94,112.4 82,106.2"/><polygon points="82,74.2 94,80.4 94,90.4 82,84.2"/><polygon points="100,127.6 112,133.8 112,143.8 100,137.6"/><polygon points="100,105.6 112,111.8 112,121.8 100,115.6"/><polygon points="100,83.6 112,89.8 112,99.8 100,93.6"/><polygon points="128,133.8 140,127.6 140,137.6 128,143.8"/><polygon points="128,111.8 140,105.6 140,115.6 128,121.8"/><polygon points="128,89.8 140,83.6 140,93.6 128,99.8"/><polygon points="146,124.4 158,118.2 158,128.2 146,134.4"/><polygon points="146,102.4 158,96.2 158,106.2 146,112.4"/><polygon points="146,80.4 158,74.2 158,84.2 146,90.4"/></g><g class="f iso-lit on" data-from="6" data-until="6"><circle cx="212" cy="30" r="10"/></g><g class="f iso-tree on" data-from="6" data-until="6"><circle cx="56" cy="124" r="5"/><circle cx="184" cy="136" r="6"/><circle cx="170" cy="150" r="4"/></g></svg>
+      <span class="path-now" aria-hidden="true">Du terrain à la réception</span>
     </div>
-    <div class="phone" data-reveal aria-label="Exemple de suivi de chantier">
-      <span class="example-tag">Exemple</span>
-      <div class="phone-screen">
-        <div class="phone-top"><b>MMA</b><span>Votre projet</span></div>
-        <div class="bubble"><img src="../assets/img/estate-2.webp" alt="" loading="lazy">Semaine 12 : dalle du premier étage coulée. Ensuite, les murs du deuxième étage.</div>
-        <div class="bubble">Votre choix : finition des menuiseries, d'ici vendredi.</div>
-        <div class="bubble me">Validé. Partons sur le bronze.</div>
+    <div class="path-cta" data-reveal><a class="btn " href="https://wa.me/212661225067?text=Bonjour%20MMA%2C%20je%20souhaite%20r%C3%A9server%20l%27appel%20d%C3%A9couverte%20gratuit%20de%2030%20minutes." target="_blank" rel="noopener">Réserver mon appel gratuit <span class="arr" aria-hidden="true">&rarr;</span></a><a class="link" href="../fr/contact.html">Ou préparez d'abord votre brief</a></div>
+    <ul class="path-perks"><li>30 minutes</li><li>Gratuit</li><li>Sans engagement</li></ul>
+  </div>
+  <div class="path-flow">
+    <div class="path-call" data-reveal>
+      <div class="dial" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><circle class="dial-ticks" cx="60" cy="60" r="54" pathLength="60"/><circle class="dial-arc" cx="60" cy="60" r="54" pathLength="60"/></svg>
+        <div class="dial-n"><strong data-count="30">30</strong><small>min</small></div>
+      </div>
+      <div>
+        <span class="eyebrow">Le point de départ</span>
+        <h3 class="display d-s">Votre appel découverte gratuit</h3>
+        <ul class="path-agenda"><li>Parlez-nous de votre terrain, de votre objectif et de votre budget</li><li>Recevez le premier avis d'un architecte sur votre projet</li><li>Repartez en sachant quelle est la bonne prochaine étape</li></ul>
       </div>
     </div>
-  </div>
-</section>
-<section class="final">
-  <img src="../assets/img/maresvista-3.webp" alt="" loading="lazy" data-parallax="5">
-  <div class="final-body">
-    <h2 class="display d-l" data-lines>Apportez le terrain. Nous vous montrons ce qu'il peut devenir.</h2>
-    <div class="btn-row" data-reveal><a class="btn " href="../fr/contact.html">Lancer votre projet <span class="arr" aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="../fr/plot-lab.html">Le tester d'abord en 3D <span class="arr" aria-hidden="true">&rarr;</span></a></div>
+    <h3 class="display d-m path-sub" data-lines>Puis six étapes, une seule équipe.</h3>
+    <div class="path-track"><span class="path-fill" aria-hidden="true"></span><ol class="path-steps"><li class="path-step" data-now="Étape 1 sur 6 · Faisabilité">
+      <span class="path-n" aria-hidden="true">1</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on new"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g></svg>
+      <div class="path-body">
+        <h4>Faisabilité</h4>
+        <p class="path-hook">Sachez ce que votre terrain peut vraiment accueillir.</p>
+        <p class="path-desc">Nous lisons les règles d&#x27;urbanisme et testons ce que le terrain peut réellement accueillir, avant d&#x27;aller plus loin.</p>
+        <p class="path-get"><span>Vous obtenez</span>Une étude de faisabilité claire</p>
+      </div>
+    </li><li class="path-step" data-now="Étape 2 sur 6 · Esquisse">
+      <span class="path-n" aria-hidden="true">2</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on new"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on new"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g></svg>
+      <div class="path-body">
+        <h4>Esquisse</h4>
+        <p class="path-hook">Voyez-le avant de décider.</p>
+        <p class="path-desc">Plans, volumes et vues 3D à comparer et à commenter.</p>
+        <p class="path-get"><span>Vous obtenez</span>Des options 3D à comparer</p>
+      </div>
+    </li><li class="path-step" data-now="Étape 3 sur 6 · Avant-projet">
+      <span class="path-n" aria-hidden="true">3</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on new"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g></svg>
+      <div class="path-body">
+        <h4>Avant-projet</h4>
+        <p class="path-hook">Votre choix, rendu précis.</p>
+        <p class="path-desc">L&#x27;esquisse retenue, mesurée et coordonnée : plans, coupes, façades, matériaux.</p>
+        <p class="path-get"><span>Vous obtenez</span>Un dossier de plans coordonné</p>
+      </div>
+    </li><li class="path-step" data-now="Étape 4 sur 6 · Permis de construire">
+      <span class="path-n" aria-hidden="true">4</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="d iso-sun on new"><path pathLength="1" d="M24 44a16 16 0 1 0 32 0a16 16 0 1 0-32 0M32 44l6 6 11-12"/></g></svg>
+      <div class="path-body">
+        <h4>Permis de construire</h4>
+        <p class="path-hook">Les démarches, nous nous en chargeons.</p>
+        <p class="path-desc">Nous préparons et déposons le dossier, puis nous le suivons auprès des autorités.</p>
+        <p class="path-get"><span>Vous obtenez</span>Un dossier déposé et suivi</p>
+      </div>
+    </li><li class="path-step" data-now="Étape 5 sur 6 · Entreprises">
+      <span class="path-n" aria-hidden="true">5</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="d iso-sun on"><path pathLength="1" d="M24 44a16 16 0 1 0 32 0a16 16 0 1 0-32 0M32 44l6 6 11-12"/></g><g class="d on new"><path pathLength="1" d="M190 130V26M160 36H226M190 26 168 36M190 26 214 36M172 36V58M168 58H176"/></g></svg>
+      <div class="path-body">
+        <h4>Entreprises</h4>
+        <p class="path-hook">Comparez ce qui est comparable.</p>
+        <p class="path-desc">Dossier d&#x27;exécution et devis comparables, avec une recommandation claire.</p>
+        <p class="path-get"><span>Vous obtenez</span>Des devis comparables et une recommandation</p>
+      </div>
+    </li><li class="path-step" data-now="Étape 6 sur 6 · Suivi de chantier">
+      <span class="path-n" aria-hidden="true">6</span>
+      <svg class="iso path-thumb" viewBox="0 0 240 190" aria-hidden="true"><polygon points="120,78 220,130 120,182 20,130"/><g class="f iso-sun on"><polygon stroke-dasharray="4 4" points="120,93.6 190,130 120,166.4 50,130"/></g><g class="f iso-shadow on new"><polygon points="74,130 120,154 84,172 38,148"/></g><g class="f iso-mask on"><polygon points="74,64 120,40 166,64 166,130 120,154 74,130"/></g><g class="d on"><path pathLength="1" d="M74 64 120 40 166 64 120 88ZM74 64V130L120 154 166 130V64M120 88V154"/></g><g class="d on"><path pathLength="1" d="M74 86 120 110 166 86M74 108 120 132 166 108"/></g><g class="f iso-lit on new"><polygon points="82,118.2 94,124.4 94,134.4 82,128.2"/><polygon points="82,96.2 94,102.4 94,112.4 82,106.2"/><polygon points="82,74.2 94,80.4 94,90.4 82,84.2"/><polygon points="100,127.6 112,133.8 112,143.8 100,137.6"/><polygon points="100,105.6 112,111.8 112,121.8 100,115.6"/><polygon points="100,83.6 112,89.8 112,99.8 100,93.6"/><polygon points="128,133.8 140,127.6 140,137.6 128,143.8"/><polygon points="128,111.8 140,105.6 140,115.6 128,121.8"/><polygon points="128,89.8 140,83.6 140,93.6 128,99.8"/><polygon points="146,124.4 158,118.2 158,128.2 146,134.4"/><polygon points="146,102.4 158,96.2 158,106.2 146,112.4"/><polygon points="146,80.4 158,74.2 158,84.2 146,90.4"/></g><g class="f iso-lit on new"><circle cx="212" cy="30" r="10"/></g><g class="f iso-tree on new"><circle cx="56" cy="124" r="5"/><circle cx="184" cy="136" r="6"/><circle cx="170" cy="150" r="4"/></g></svg>
+      <div class="path-body">
+        <h4>Suivi de chantier</h4>
+        <p class="path-hook">Ce qui est dessiné est construit.</p>
+        <p class="path-desc">Visites régulières et comptes rendus jusqu&#x27;à la réception.</p>
+        <p class="path-get"><span>Vous obtenez</span>Des comptes rendus jusqu&#x27;à la réception</p>
+      </div>
+    </li></ol></div>
+    <p class="lede path-note" data-reveal>Vous validez chaque étape avant la suivante. Vous pouvez commencer par la seule étude de faisabilité, puis décider.</p>
+    <div class="path-end" data-reveal>
+      <p class="display d-s">La première étape prend 30 minutes et ne coûte rien.</p>
+      <a class="btn ink" href="https://wa.me/212661225067?text=Bonjour%20MMA%2C%20je%20souhaite%20r%C3%A9server%20l%27appel%20d%C3%A9couverte%20gratuit%20de%2030%20minutes." target="_blank" rel="noopener">Réserver mon appel gratuit <span class="arr" aria-hidden="true">&rarr;</span></a>
+    </div>
   </div>
 </section>
 
@@ -170,18 +243,18 @@
     <div><img class="foot-logo" src="../assets/logo-full-white.png" alt="MMA, Mharrech Mribah Architects" loading="lazy"></div>
     <div><h4>Explorer</h4><ul><li><a href="../fr/projects.html">Projets</a></li><li><a href="../fr/plot-lab.html">Plot Lab</a></li><li><a href="../fr/expertise.html">Expertise</a></li><li><a href="../fr/studio.html">Studio</a></li></ul></div>
     <div><h4>Nous parler</h4><ul>
-      <li><a href="tel:+212661225067">06 61 22 50 67</a></li>
-      <li><a href="tel:+212633931542">06 33 93 15 42</a></li>
+      <li><a href="tel:+212661225067"><span dir="ltr">06 61 22 50 67</span></a></li>
+      <li><a href="tel:+212633931542"><span dir="ltr">06 33 93 15 42</span></a></li>
       <li><a href="https://wa.me/212661225067?text=Bonjour%20MMA%2C%20je%20souhaite%20parler%20d%27un%20projet." target="_blank" rel="noopener">WhatsApp</a></li>
     </ul></div>
     <div><h4>Studio</h4><ul><li>Tanger, Maroc</li><li><a href="../fr/contact.html">Lancer un projet</a></li></ul></div>
   </div>
-  <div class="foot-end"><span>© 2026 MMA, Mharrech Mribah Architects</span><span>Les images sont des visualisations du projet.</span></div>
+  <div class="foot-end"><span dir="ltr">© 2026 MMA, Mharrech Mribah Architects</span><span>Les images sont des visualisations du projet.</span></div>
 </footer>
 <div class="dock">
   <div class="dock-menu">
     <a href="https://wa.me/212661225067?text=Bonjour%20MMA%2C%20je%20souhaite%20parler%20d%27un%20projet." target="_blank" rel="noopener">WhatsApp</a>
-    <a href="tel:+212661225067">06 61 22 50 67</a>
+    <a href="tel:+212661225067"><span dir="ltr">06 61 22 50 67</span></a>
     <a href="../fr/contact.html">Lancer un projet</a>
   </div>
   <button class="dock-btn" type="button" aria-expanded="false" aria-label="Parler à un architecte"><i></i><span>Parler à un architecte</span></button>
