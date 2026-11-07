@@ -10,10 +10,17 @@ from translations import TR, ZH
 
 ROOT = Path(__file__).parent
 PHONES = [("06 61 22 50 67", "212661225067"), ("06 33 93 15 42", "212633931542")]
+# Plot Lab map layers. Check the "Going public" list in README.md before launch: the imagery needs a licence for commercial use.
+IMAGERY_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+IMAGERY_CREDIT = "Imagery © Esri, Maxar, Earthstar Geographics"
+STREET_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+STREET_CREDIT = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
 LANG = "en"
 PREFIX = ""
 OTHER_PATH = ""
 FULL_LANGS = ("fr", "en", "es", "ar")
+ZH_PAGES = ("index.html", "plot-lab.html")  # the only pages that exist in Chinese
+ZH_LANDING = True  # whether the Chinese page being built is the landing page, which holds the section anchors
 # code, name in its own language, label in the switch
 SWITCH = (("fr", "Français", "FR"), ("en", "English", "EN"), ("es", "Español", "ES"), ("ar", "العربية", "عربي"), ("zh", "中文", "中文"))
 LOCALES = {"fr": "fr-FR", "en": "en-GB", "es": "es-ES", "ar": "en-GB", "zh": "en-GB"}
@@ -63,11 +70,12 @@ def img(name):
 
 
 def url(path):
-    """Link to a page in the current language. The Chinese site is one page, so its links stay on it."""
+    """Link to a page in the current language. Chinese pages that don't exist fall back to the landing page's contact section."""
     if LANG == "zh":
-        if path.startswith("#"):
-            return path
-        return f"{PREFIX}zh/index.html" if path == "index.html" else "#contact"
+        if path in ZH_PAGES:
+            return f"{PREFIX}zh/{path}"
+        anchor = path if path.startswith("#") else "#contact"
+        return anchor if ZH_LANDING else f"{PREFIX}zh/index.html{anchor}"
     return f"{PREFIX}{LANG}/{path}"
 
 
@@ -208,26 +216,26 @@ def compare_block(cmp, cls="", tease=False):
 # ---------------------------------------------------------------- Layout
 def nav_links():
     if LANG == "zh":
-        return [("#services", "服务范围", "services"), ("#work", "项目案例", "work"), ("#process", "合作流程", "process")]
+        return [("#services", "服务范围", "services"), ("#work", "项目案例", "work"), ("plot-lab.html", "地块实验室", "lab"), ("#process", "合作流程", "process")]
     return [("projects.html", t("Projects", "Projets"), "projects"), ("plot-lab.html", t("Plot Lab", "Plot Lab"), "lab"),
             ("expertise.html", t("Expertise", "Expertise"), "expertise"), ("studio.html", t("Studio", "Studio"), "studio")]
 
 
 def lang_switch(path):
-    """Language switch: the current language is marked, the others link to the same page (Chinese has only its landing page)."""
+    """Language switch: the current language is marked, the others link to the same page (or the Chinese landing page if it has no Chinese version)."""
     parts = []
     for code, name, label in SWITCH:
         if code == LANG:
             parts.append(f'<span aria-current="true" aria-label="{name}">{label}</span>')
         else:
-            target = "index.html" if code == "zh" else path
+            target = "index.html" if code == "zh" and path not in ZH_PAGES else path
             parts.append(f'<a href="{PREFIX}{code}/{target}" hreflang="{code}" lang="{code}" aria-label="{name}">{label}</a>')
     return f'<div class="lang" role="group" aria-label="{t("Language", "Langue")}">{"".join(parts)}</div>'
 
 
 def layout(path, title, desc, main, active="", extra_head="", extra_js="", i18n=None):
     global OTHER_PATH
-    alternates = "".join(f'<link rel="alternate" hreflang="{c}" href="{PREFIX}{c}/{path}">\n' for c in FULL_LANGS + (("zh",) if path == "index.html" else ()) if c != LANG)
+    alternates = "".join(f'<link rel="alternate" hreflang="{c}" href="{PREFIX}{c}/{path}">\n' for c in FULL_LANGS + (("zh",) if path in ZH_PAGES else ()) if c != LANG)
     fonts = f"{LATIN_FONTS}&{FONTS[LANG]}" if LANG in FONTS else LATIN_FONTS
     links = "".join(f'<a href="{url(h)}"{" aria-current=page" if k == active else ""}>{escape(l)}</a>' for h, l, k in nav_links())
     mobile = "".join(f'<a class="display" href="{url(h)}">{escape(l)}</a>' for h, l, k in nav_links())
@@ -649,9 +657,42 @@ def page_lab():
         "save": t("Save option", "Garder l'option"), "saved": t("Saved", "Gardée"),
         "option": t("Option", "Option"), "remove": t("Remove", "Retirer"),
         "programs": dict(programs), "finishes": dict(finishes), "contactUrl": url("contact.html"),
-        "locale": LOCALES[LANG], "m2": t("m²", "m²"), "mad": t("MAD", "MAD"),
+        "locale": LOCALES[LANG], "dateLocale": {"ar": "ar-MA", "zh": "zh-CN"}.get(LANG, LOCALES[LANG]), "m2": t("m²", "m²"), "mad": t("MAD", "MAD"),
+        "plotSample": t("Sample plot, Tangier", "Terrain d'exemple, Tanger"),
+        "plotSampleNote": t("The sun is real for Tangier. The square plot, road and neighbours are only illustrative.", "Le soleil est réel pour Tanger. Le terrain carré, la route et les voisins sont seulement illustratifs."),
+        "plotYours": t("Your plot", "Votre terrain"),
+        "plotPick": t("Select my plot on a map", "Choisir mon terrain sur une carte"), "plotChange": t("Change the plot", "Modifier le terrain"),
+        "studyPlot": t("Plot", "Terrain"),
+        "fitLimit": t("The shape of this plot limits a rectangular building to about {pct} % coverage. The figures use that.", "La forme de ce terrain limite un bâtiment rectangulaire à environ {pct} % d'emprise. Les chiffres en tiennent compte."),
+        "sunrise": t("Sunrise", "Lever"), "sunset": t("Sunset", "Coucher"),
+        "noRiseSet": t("No sunrise or sunset on this date", "Ni lever ni coucher du soleil à cette date"),
+        "sunNow": t("Sun {alt}° above the horizon, {az}° from north", "Soleil à {alt}° au-dessus de l'horizon, {az}° depuis le nord"),
+        "sunBelow": t("The sun is below the horizon", "Le soleil est sous l'horizon"),
+        "map": {
+            "imagery": IMAGERY_URL, "imageryCredit": IMAGERY_CREDIT, "street": STREET_URL, "streetCredit": STREET_CREDIT,
+            "drawHint": t("Find your plot, then click each of its corners.", "Trouvez votre terrain, puis cliquez sur chacun de ses angles."),
+            "moreCorners": t("Keep going: a plot needs at least 3 corners.", "Continuez : il faut au moins 3 angles."),
+            "zoomIn": t("Zooming in. Click again to place the corner accurately.", "Zoom en cours. Cliquez de nouveau pour placer l'angle avec précision."),
+            "measured": t("Measured area: about {area} m². Drag a corner to adjust it.", "Surface mesurée : environ {area} m². Faites glisser un angle pour l'ajuster."),
+            "crossing": t("The sides of the plot cross. Move a corner or undo the last one.", "Les côtés du terrain se croisent. Déplacez un angle ou annulez le dernier."),
+            "tooSmall": t("This is smaller than {n} m². Check the corners.", "C'est moins de {n} m². Vérifiez les angles."),
+            "tooLarge": t("This is larger than {n} m², the most the Plot Lab can study.", "C'est plus de {n} m², le maximum que le Plot Lab peut étudier."),
+            "searchNone": t("Nothing found. Try a nearby town or paste coordinates.", "Aucun résultat. Essayez une ville proche ou collez des coordonnées."),
+            "searchFail": t("The search isn't responding. Try moving the map by hand.", "La recherche ne répond pas. Essayez de déplacer la carte à la main."),
+            "gpsFail": t("Your location isn't available. Check the browser's permission or search instead.", "Votre position n'est pas disponible. Vérifiez l'autorisation du navigateur ou lancez une recherche."),
+            "loadFail": t("The map couldn't load. Check your connection and try again.", "La carte n'a pas pu se charger. Vérifiez votre connexion et réessayez."),
+        },
         "noGl": t("3D isn't available in this browser. You can still use the controls to see the figures.", "La 3D n'est pas disponible dans ce navigateur. Les réglages restent utilisables pour voir les chiffres."),
     }}
+    send_attrs = ""
+    if LANG == "zh":
+        # No Chinese contact form: the study goes by WhatsApp, worded so that the French, English and Arabic speaking team can read it.
+        i18n["lab"].update({
+            "levelsText": "{n} 层", "ground": "G", "studyPlot": "Plot",
+            "send": {"whatsapp": PHONES[0][1], "intro": "您好 MMA，这是我的地块研究。/ Hello MMA, here is my Plot Lab study.",
+                     "programs": {"villa": "别墅 / Villa", "apartments": "公寓 / Apartments", "hotel": "酒店 / Hotel"}},
+        })
+        send_attrs = ' target="_blank" rel="noopener"'
     th = "".join(f"<th scope=col>{escape(x)}</th>" for x in [t("Option", "Option"), t("Type", "Type"), t("Plot", "Terrain"), t("Coverage", "Emprise"), t("Levels", "Niveaux"), t("Floor area", "Surface"), t("Capacity", "Capacité"), t("Finish", "Finition"), t("Budget (MAD)", "Budget (MAD)"), ""])
     main = f'''
 <section class="lab" id="labRoot">
@@ -661,29 +702,64 @@ def page_lab():
       <h1 class="display d-l" data-lines>{t("Plot Lab", "Plot Lab")}</h1>
       <p style="margin-top:6px;max-width:27em">{t("Shape a first idea of your project, then send it to the architects.", "Dessinez une première idée de votre projet, puis envoyez-la aux architectes.")}</p>
     </div>
+    <div class="lab-compass" role="img" aria-label="{t("Compass showing north", "Boussole indiquant le nord")}"><i aria-hidden="true"><b>N</b></i></div>
     <p class="lab-hint">{t("Drag to turn · Scroll or pinch to zoom", "Glissez pour tourner · Molette ou pincement pour zoomer")}</p>
+    <p class="lab-credit hide">{IMAGERY_CREDIT}</p>
   </div>
-  <aside class="lab-panel" aria-label="{t("Study controls", "Réglages de l'étude")}">
+  <aside class="lab-panel" data-lenis-prevent aria-label="{t("Study controls", "Réglages de l'étude")}">
+    <div class="lab-plot">
+      <strong id="plotLabel"></strong>
+      <span id="plotDetail"></span>
+      <div class="lab-plot-actions"><button class="mini" id="plotPick" type="button"></button><button class="link" id="plotReset" type="button">{t("Back to the sample", "Revenir à l'exemple")}</button></div>
+    </div>
     <div class="seg" role="group" aria-label="{t("Type of project", "Type de projet")}">{prog}</div>
-    <div class="ctl"><label for="labArea"><span>{t("Plot size", "Surface du terrain")}</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
-    <div class="ctl"><label for="labCover"><span>{t("Coverage of the plot", "Emprise au sol")}</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"></div>
+    <div class="ctl" id="labAreaCtl"><label for="labArea"><span>{t("Plot size", "Surface du terrain")}</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
+    <div class="ctl"><label for="labCover"><span>{t("Coverage of the plot", "Emprise au sol")}</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"><p class="note lab-fit hide" id="labFitNote" role="status"></p></div>
     <div class="ctl"><label for="labFloors"><span>{t("Levels", "Niveaux")}</span><output id="outFloors"></output></label><input id="labFloors" type="range" step="1"></div>
-    <div class="ctl"><label for="labHour"><span>{t("Time of day", "Heure de la journée")}</span><output id="outHour"></output></label><input id="labHour" type="range" min="6" max="21" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">{t("Play the day", "Lancer la journée")}</button></div>
+    <div class="ctl"><label for="labDay"><span>{t("Date", "Date")}</span><output id="outDay"></output></label><input id="labDay" type="range" min="1" max="366" step="1"><div class="day-shortcuts"><button type="button" data-day="today">{t("Today", "Aujourd'hui")}</button><button type="button" data-day="june"></button><button type="button" data-day="december"></button></div></div>
+    <div class="ctl"><label for="labHour"><span>{t("Time at the plot", "Heure sur le terrain")}</span><output id="outHour"></output></label><input id="labHour" type="range" min="0" max="24" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">{t("Play the day", "Lancer la journée")}</button>
+      <p class="sun-facts"><span id="outSunTimes"></span><span id="outSunNow"></span></p></div>
     <div class="seg" role="group" aria-label="{t("Level of finish", "Niveau de finition")}">{fin}</div>
+    <p class="note">{t("Illustrative only, using sample rates that MMA will confirm. Real limits come from your plot's planning rules, and the plot you draw is not a survey. Capacity assumes 85 m² per apartment and 40 m² per room. The sun's position is calculated for the place and date. The ground is shown flat, with a clear sky, and without shade from neighbouring buildings or hills.",
+      "À titre indicatif, avec des tarifs d'exemple que MMA confirmera. Les limites réelles dépendent des règles d'urbanisme de votre terrain, et le tracé que vous dessinez ne remplace pas un relevé. Capacité sur la base de 85 m² par appartement et 40 m² par chambre. La position du soleil est calculée pour le lieu et la date. Le sol est représenté plat, par ciel dégagé, sans l'ombre des bâtiments voisins ni des reliefs.")}</p>
+    <div class="lab-sticky">
     <div class="lab-res" aria-live="polite">
       <div><span>{t("Floor area", "Surface de plancher")}</span><strong id="resFloor"></strong></div>
       <div><span>{t("Rough capacity", "Capacité estimée")}</span><strong id="resCap"></strong></div>
       <div class="wide"><span>{t("First budget, excluding land", "Premier budget, hors terrain")}</span><strong id="resBudget"></strong></div>
     </div>
     <div class="lab-actions">
-      <a class="btn" id="labSend" href="{url("contact.html")}">{t("Send this study to MMA", "Envoyer cette étude à MMA")} {ARROW}</a>
+      <a class="btn" id="labSend" href="{url("contact.html")}"{send_attrs}>{t("Send this study to MMA", "Envoyer cette étude à MMA")} {ARROW}</a>
       <button class="mini" id="labSave" type="button">{t("Save option", "Garder l'option")}</button>
       <button class="mini" id="labShare" type="button">{t("Copy link", "Copier le lien")}</button>
     </div>
-    <p class="note">{t("Illustrative only, using sample rates that MMA will confirm. Real limits come from your plot's planning rules. Capacity assumes 85 m² per apartment and 40 m² per room. Sun position is indicative.",
-      "À titre indicatif, avec des tarifs d'exemple que MMA confirmera. Les limites réelles dépendent des règles d'urbanisme de votre terrain. Capacité sur la base de 85 m² par appartement et 40 m² par chambre. Position du soleil indicative.")}</p>
+    </div>
   </aside>
 </section>
+<dialog class="plot-dialog" id="plotDialog" data-lenis-prevent aria-labelledby="plotDialogTitle">
+  <div class="plot-head">
+    <h2 class="display d-s" id="plotDialogTitle">{t("Find your plot", "Trouvez votre terrain")}</h2>
+    <form id="plotSearch" role="search">
+      <input id="plotQuery" type="search" autocomplete="off" aria-label="{t("Address, place or coordinates", "Adresse, lieu ou coordonnées")}" placeholder="{t("Address, place or coordinates", "Adresse, lieu ou coordonnées")}">
+      <button class="mini" type="submit">{t("Search", "Rechercher")}</button>
+    </form>
+    <button class="mini" id="plotGps" type="button">{t("Use my location", "Ma position")}</button>
+    <div class="seg" role="group" aria-label="{t("Map type", "Type de carte")}"><button type="button" data-layer="satellite" aria-pressed="true">{t("Satellite", "Satellite")}</button><button type="button" data-layer="street" aria-pressed="false">{t("Streets", "Rues")}</button></div>
+  </div>
+  <div class="plot-results" id="plotResults"></div>
+  <div class="plot-map-wrap"><div id="plotMap" dir="ltr"></div><span class="plot-cross" aria-hidden="true"></span></div>
+  <div class="plot-foot">
+    <p id="plotStatus" role="status"></p>
+    <div class="plot-tools">
+      <button class="mini" id="plotAddCentre" type="button">{t("Add a corner at the crosshair", "Ajouter un angle au viseur")}</button>
+      <button class="mini" id="plotUndo" type="button">{t("Undo", "Annuler")}</button>
+      <button class="mini" id="plotClear" type="button">{t("Clear", "Effacer")}</button>
+      <button class="mini" id="plotCancel" type="button">{t("Cancel", "Fermer")}</button>
+      <button class="btn" id="plotUse" type="button" disabled>{t("Use this plot", "Utiliser ce terrain")} {ARROW}</button>
+    </div>
+    <p class="note">{t("Searches go to OpenStreetMap and map views to the map providers. MMA only receives your plot if you send the study.", "Les recherches passent par OpenStreetMap et l'affichage de la carte par ses fournisseurs. MMA ne reçoit votre terrain que si vous envoyez l'étude.")}</p>
+  </div>
+</dialog>
 <section class="section wrap white hide" id="labCompare" style="padding-block:clamp(40px,6vw,90px)">
   <h2 class="display d-m" style="margin-bottom:22px">{t("Your options, side by side.", "Vos options, côte à côte.")}</h2>
   <div class="table-scroll"><table class="compare-table"><thead><tr>{th}</tr></thead><tbody id="labCompareBody"></tbody></table></div>
@@ -837,7 +913,7 @@ def page_contact():
 
 # ---------------------------------------------------------------- Chinese landing page
 def page_zh():
-    """One focused page for Chinese companies in Morocco. The full site is not translated into Chinese."""
+    """One focused page for Chinese companies in Morocco. Apart from the Plot Lab, the full site is not translated into Chinese."""
     services = [
         ("apartments-day", "员工住宅与管理层公寓", "为派驻摩洛哥的团队规划住宿：在规划条例允许的范围内，测算可建户数、户型与停车位。我们设计过一栋 180 户、总建筑面积 27,024 m² 的住宅楼。"),
         ("tower-3", "办公与配套建筑", "为您在丹吉尔、卡萨布兰卡等城市的机构设计办公及配套空间，在动工之前把功能、动线与预算确定下来。"),
@@ -906,7 +982,7 @@ def write(rel, html):
 
 
 def build():
-    global LANG, PREFIX
+    global LANG, PREFIX, ZH_LANDING
     count = 0
     for LANG in ("en", "fr", "es", "ar"):
         PREFIX = "../"
@@ -918,8 +994,11 @@ def build():
             write(f'{LANG}/projects/{p["slug"]}.html', page_project(p, PROJECTS[(i + 1) % len(PROJECTS)]))
             count += 1
     LANG, PREFIX = "zh", "../"
+    ZH_LANDING = True
     write("zh/index.html", page_zh())
-    count += 1
+    ZH_LANDING = False
+    write("zh/plot-lab.html", page_lab())
+    count += 2
     if MISSING:
         raise SystemExit("Missing translations (add them to translations.py):\n" + "\n".join(f"  [{l}] {s}" for l, s in sorted(MISSING)))
     write("index.html", '''<!doctype html>

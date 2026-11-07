@@ -336,7 +336,8 @@
     const params = new URLSearchParams(location.search);
     if (params.get('type')) state.type = params.get('type');
     if (params.get('stage')) state.stage = params.get('stage');
-    const study = params.get('study');
+    /* The Plot Lab sends its study in the hash, which isn't sent to the server */
+    const study = new URLSearchParams(location.hash.slice(1)).get('study') || params.get('study');
     let at = 0;
     const lang = root.lang;
 

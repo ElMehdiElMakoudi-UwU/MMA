@@ -9,6 +9,7 @@
 <link rel="alternate" hreflang="fr" href="../fr/plot-lab.html">
 <link rel="alternate" hreflang="en" href="../en/plot-lab.html">
 <link rel="alternate" hreflang="es" href="../es/plot-lab.html">
+<link rel="alternate" hreflang="zh" href="../zh/plot-lab.html">
 <link rel="alternate" hreflang="x-default" href="../fr/plot-lab.html">
 <link rel="icon" href="../assets/logo-mma-white.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +27,7 @@
   <a class="logo" href="../ar/index.html"><img src="../assets/logo-mma-white.png" alt="MMA, Mharrech Mribah Architects" width="500" height="172"></a>
   <nav class="nav" aria-label="القائمة الرئيسية">
     <a href="../ar/projects.html">المشاريع</a><a href="../ar/plot-lab.html" aria-current=page>Plot Lab</a><a href="../ar/expertise.html">الخبرات</a><a href="../ar/studio.html">المكتب</a>
-    <div class="lang" role="group" aria-label="اللغة"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><span aria-current="true" aria-label="العربية">عربي</span><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
+    <div class="lang" role="group" aria-label="اللغة"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><span aria-current="true" aria-label="العربية">عربي</span><a href="../zh/plot-lab.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
     <a class="btn" href="../ar/contact.html">ابدأوا مشروعًا</a>
     <button class="menu-btn" type="button" aria-label="القائمة" aria-expanded="false"><span></span><span></span></button>
   </nav>
@@ -34,7 +35,7 @@
 <div class="mobile-menu">
   <a class="display" href="../ar/projects.html">المشاريع</a><a class="display" href="../ar/plot-lab.html">Plot Lab</a><a class="display" href="../ar/expertise.html">الخبرات</a><a class="display" href="../ar/studio.html">المكتب</a>
   <a class="display" href="../ar/contact.html">ابدأوا مشروعًا</a>
-  <div class="lang" role="group" aria-label="اللغة"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><span aria-current="true" aria-label="العربية">عربي</span><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
+  <div class="lang" role="group" aria-label="اللغة"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><span aria-current="true" aria-label="العربية">عربي</span><a href="../zh/plot-lab.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
 </div>
 <main id="main">
 
@@ -45,15 +46,26 @@
       <h1 class="display d-l" data-lines>Plot Lab</h1>
       <p style="margin-top:6px;max-width:27em">شكّلوا فكرة أولية عن مشروعكم، ثم أرسلوها إلى المهندسين المعماريين.</p>
     </div>
+    <div class="lab-compass" role="img" aria-label="بوصلة تشير إلى الشمال"><i aria-hidden="true"><b>N</b></i></div>
     <p class="lab-hint">اسحبوا للتدوير · مرّروا أو اقرصوا للتكبير</p>
+    <p class="lab-credit hide">Imagery © Esri, Maxar, Earthstar Geographics</p>
   </div>
-  <aside class="lab-panel" aria-label="أدوات التحكم في الدراسة">
+  <aside class="lab-panel" data-lenis-prevent aria-label="أدوات التحكم في الدراسة">
+    <div class="lab-plot">
+      <strong id="plotLabel"></strong>
+      <span id="plotDetail"></span>
+      <div class="lab-plot-actions"><button class="mini" id="plotPick" type="button"></button><button class="link" id="plotReset" type="button">العودة إلى النموذج</button></div>
+    </div>
     <div class="seg" role="group" aria-label="نوع المشروع"><button type="button" data-program="villa">فيلا</button><button type="button" data-program="apartments">شقق</button><button type="button" data-program="hotel">فندق</button></div>
-    <div class="ctl"><label for="labArea"><span>مساحة القطعة الأرضية</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
-    <div class="ctl"><label for="labCover"><span>نسبة البناء على القطعة الأرضية</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"></div>
+    <div class="ctl" id="labAreaCtl"><label for="labArea"><span>مساحة القطعة الأرضية</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
+    <div class="ctl"><label for="labCover"><span>نسبة البناء على القطعة الأرضية</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"><p class="note lab-fit hide" id="labFitNote" role="status"></p></div>
     <div class="ctl"><label for="labFloors"><span>الطوابق</span><output id="outFloors"></output></label><input id="labFloors" type="range" step="1"></div>
-    <div class="ctl"><label for="labHour"><span>وقت اليوم</span><output id="outHour"></output></label><input id="labHour" type="range" min="6" max="21" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">تشغيل اليوم</button></div>
+    <div class="ctl"><label for="labDay"><span>التاريخ</span><output id="outDay"></output></label><input id="labDay" type="range" min="1" max="366" step="1"><div class="day-shortcuts"><button type="button" data-day="today">اليوم</button><button type="button" data-day="june"></button><button type="button" data-day="december"></button></div></div>
+    <div class="ctl"><label for="labHour"><span>الوقت في موقع القطعة</span><output id="outHour"></output></label><input id="labHour" type="range" min="0" max="24" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">تشغيل اليوم</button>
+      <p class="sun-facts"><span id="outSunTimes"></span><span id="outSunNow"></span></p></div>
     <div class="seg" role="group" aria-label="مستوى التشطيب"><button type="button" data-finish="standard">عادي</button><button type="button" data-finish="premium">ممتاز</button><button type="button" data-finish="highend">راقٍ</button></div>
+    <p class="note">للتوضيح فقط، بأسعار نموذجية ستؤكدها MMA. تحدد قواعد التعمير الخاصة بأرضكم الحدود الفعلية، ولا يُغني المخطط الذي ترسمونه عن المسح الطبوغرافي. تُحتسب السعة على أساس 85 م² للشقة و40 م² للغرفة. يُحسب موقع الشمس حسب المكان والتاريخ. تظهر الأرض مستوية والسماء صافية، دون احتساب ظل المباني المجاورة أو التضاريس.</p>
+    <div class="lab-sticky">
     <div class="lab-res" aria-live="polite">
       <div><span>المساحة المبنية</span><strong id="resFloor"></strong></div>
       <div><span>السعة التقديرية</span><strong id="resCap"></strong></div>
@@ -64,9 +76,33 @@
       <button class="mini" id="labSave" type="button">حفظ الخيار</button>
       <button class="mini" id="labShare" type="button">نسخ الرابط</button>
     </div>
-    <p class="note">للتوضيح فقط، بأسعار نموذجية ستؤكدها MMA. تحدد قواعد التعمير الخاصة بأرضكم الحدود الفعلية. تُحتسب السعة على أساس 85 م² للشقة و40 م² للغرفة. موقع الشمس تقريبي.</p>
+    </div>
   </aside>
 </section>
+<dialog class="plot-dialog" id="plotDialog" data-lenis-prevent aria-labelledby="plotDialogTitle">
+  <div class="plot-head">
+    <h2 class="display d-s" id="plotDialogTitle">ابحثوا عن قطعتكم الأرضية</h2>
+    <form id="plotSearch" role="search">
+      <input id="plotQuery" type="search" autocomplete="off" aria-label="العنوان أو المكان أو الإحداثيات" placeholder="العنوان أو المكان أو الإحداثيات">
+      <button class="mini" type="submit">بحث</button>
+    </form>
+    <button class="mini" id="plotGps" type="button">استخدام موقعي</button>
+    <div class="seg" role="group" aria-label="نوع الخريطة"><button type="button" data-layer="satellite" aria-pressed="true">قمر صناعي</button><button type="button" data-layer="street" aria-pressed="false">الشوارع</button></div>
+  </div>
+  <div class="plot-results" id="plotResults"></div>
+  <div class="plot-map-wrap"><div id="plotMap" dir="ltr"></div><span class="plot-cross" aria-hidden="true"></span></div>
+  <div class="plot-foot">
+    <p id="plotStatus" role="status"></p>
+    <div class="plot-tools">
+      <button class="mini" id="plotAddCentre" type="button">إضافة زاوية عند علامة التصويب</button>
+      <button class="mini" id="plotUndo" type="button">تراجع</button>
+      <button class="mini" id="plotClear" type="button">مسح</button>
+      <button class="mini" id="plotCancel" type="button">إلغاء</button>
+      <button class="btn" id="plotUse" type="button" disabled>استخدام هذه القطعة <span class="arr" aria-hidden="true">&rarr;</span></button>
+    </div>
+    <p class="note">تمر عمليات البحث عبر OpenStreetMap، ويتولى مزودو الخرائط عرض الخريطة. لا تتلقى MMA بيانات قطعتكم الأرضية إلا إذا أرسلتم الدراسة.</p>
+  </div>
+</dialog>
 <section class="section wrap white hide" id="labCompare" style="padding-block:clamp(40px,6vw,90px)">
   <h2 class="display d-m" style="margin-bottom:22px">خياراتكم جنبًا إلى جنب.</h2>
   <div class="table-scroll"><table class="compare-table"><thead><tr><th scope=col>الخيار</th><th scope=col>النوع</th><th scope=col>القطعة الأرضية</th><th scope=col>نسبة البناء</th><th scope=col>الطوابق</th><th scope=col>المساحة المبنية</th><th scope=col>السعة</th><th scope=col>التشطيب</th><th scope=col>الميزانية (درهم)</th><th scope=col></th></tr></thead><tbody id="labCompareBody"></tbody></table></div>
@@ -102,7 +138,7 @@
   <button class="dock-btn" type="button" aria-expanded="false" aria-label="تحدثوا إلى مهندس معماري"><i></i><span>تحدثوا إلى مهندس معماري</span></button>
 </div>
 <div class="cursor" aria-hidden="true"></div>
-<script>window.MMA_I18N={"lab": {"rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]}, "ground": "أرضي", "units": "شقة", "rooms": "غرفة", "oneVilla": "فيلا واحدة", "play": "تشغيل اليوم", "pause": "إيقاف مؤقت", "share": "نسخ الرابط", "copied": "تم نسخ الرابط", "linkInBar": "الرابط في شريط العنوان", "save": "حفظ الخيار", "saved": "تم الحفظ", "option": "الخيار", "remove": "حذف", "programs": {"villa": "فيلا", "apartments": "شقق", "hotel": "فندق"}, "finishes": {"standard": "عادي", "premium": "ممتاز", "highend": "راقٍ"}, "contactUrl": "../ar/contact.html", "locale": "en-GB", "m2": "م²", "mad": "درهم", "noGl": "العرض ثلاثي الأبعاد غير متاح في هذا المتصفح. يمكنكم مع ذلك استخدام أدوات التحكم لرؤية الأرقام."}}</script>
+<script>window.MMA_I18N={"lab": {"rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]}, "ground": "أرضي", "units": "شقة", "rooms": "غرفة", "oneVilla": "فيلا واحدة", "play": "تشغيل اليوم", "pause": "إيقاف مؤقت", "share": "نسخ الرابط", "copied": "تم نسخ الرابط", "linkInBar": "الرابط في شريط العنوان", "save": "حفظ الخيار", "saved": "تم الحفظ", "option": "الخيار", "remove": "حذف", "programs": {"villa": "فيلا", "apartments": "شقق", "hotel": "فندق"}, "finishes": {"standard": "عادي", "premium": "ممتاز", "highend": "راقٍ"}, "contactUrl": "../ar/contact.html", "locale": "en-GB", "dateLocale": "ar-MA", "m2": "م²", "mad": "درهم", "plotSample": "قطعة أرضية نموذجية، طنجة", "plotSampleNote": "الشمس حقيقية بالنسبة إلى طنجة. أما القطعة المربعة والطريق والمباني المجاورة فهي للتوضيح فقط.", "plotYours": "قطعتكم الأرضية", "plotPick": "اختيار قطعتي الأرضية على الخريطة", "plotChange": "تغيير القطعة الأرضية", "studyPlot": "القطعة الأرضية", "fitLimit": "يحدّ شكل هذه القطعة من نسبة بناء مبنى مستطيل إلى نحو {pct} %. وتعتمد الأرقام على ذلك.", "sunrise": "شروق الشمس", "sunset": "غروب الشمس", "noRiseSet": "لا شروق ولا غروب في هذا التاريخ", "sunNow": "الشمس على ارتفاع {alt}° فوق الأفق، و{az}° من الشمال", "sunBelow": "الشمس تحت الأفق", "map": {"imagery": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", "imageryCredit": "Imagery © Esri, Maxar, Earthstar Geographics", "street": "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "streetCredit": "© <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a>", "drawHint": "ابحثوا عن قطعتكم الأرضية، ثم انقروا على كل زاوية من زواياها.", "moreCorners": "تابعوا: تحتاج القطعة إلى 3 زوايا على الأقل.", "zoomIn": "جارٍ التكبير. انقروا مرة أخرى لوضع الزاوية بدقة.", "measured": "المساحة المقيسة: نحو {area} م². اسحبوا أي زاوية لتعديلها.", "crossing": "تتقاطع أضلاع القطعة. حرّكوا إحدى الزوايا أو ألغوا آخر زاوية.", "tooSmall": "المساحة أقل من {n} م². تحققوا من الزوايا.", "tooLarge": "المساحة أكبر من {n} م²، وهو الحد الأقصى الذي يمكن لـ Plot Lab دراسته.", "searchNone": "لا توجد نتائج. جرّبوا مدينة قريبة أو ألصقوا الإحداثيات.", "searchFail": "البحث لا يستجيب. جرّبوا تحريك الخريطة يدويًا.", "gpsFail": "موقعكم غير متاح. تحققوا من إذن المتصفح أو استخدموا البحث.", "loadFail": "تعذّر تحميل الخريطة. تحققوا من اتصالكم وحاولوا مرة أخرى."}, "noGl": "العرض ثلاثي الأبعاد غير متاح في هذا المتصفح. يمكنكم مع ذلك استخدام أدوات التحكم لرؤية الأرقام."}}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>

@@ -9,6 +9,7 @@
 <link rel="alternate" hreflang="fr" href="../fr/plot-lab.html">
 <link rel="alternate" hreflang="es" href="../es/plot-lab.html">
 <link rel="alternate" hreflang="ar" href="../ar/plot-lab.html">
+<link rel="alternate" hreflang="zh" href="../zh/plot-lab.html">
 <link rel="alternate" hreflang="x-default" href="../fr/plot-lab.html">
 <link rel="icon" href="../assets/logo-mma-white.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +27,7 @@
   <a class="logo" href="../en/index.html"><img src="../assets/logo-mma-white.png" alt="MMA, Mharrech Mribah Architects" width="500" height="172"></a>
   <nav class="nav" aria-label="Main">
     <a href="../en/projects.html">Projects</a><a href="../en/plot-lab.html" aria-current=page>Plot Lab</a><a href="../en/expertise.html">Expertise</a><a href="../en/studio.html">Studio</a>
-    <div class="lang" role="group" aria-label="Language"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><span aria-current="true" aria-label="English">EN</span><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/plot-lab.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
+    <div class="lang" role="group" aria-label="Language"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><span aria-current="true" aria-label="English">EN</span><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/plot-lab.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/plot-lab.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
     <a class="btn" href="../en/contact.html">Start a project</a>
     <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
   </nav>
@@ -34,7 +35,7 @@
 <div class="mobile-menu">
   <a class="display" href="../en/projects.html">Projects</a><a class="display" href="../en/plot-lab.html">Plot Lab</a><a class="display" href="../en/expertise.html">Expertise</a><a class="display" href="../en/studio.html">Studio</a>
   <a class="display" href="../en/contact.html">Start a project</a>
-  <div class="lang" role="group" aria-label="Language"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><span aria-current="true" aria-label="English">EN</span><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/plot-lab.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/index.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
+  <div class="lang" role="group" aria-label="Language"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><span aria-current="true" aria-label="English">EN</span><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/plot-lab.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><a href="../zh/plot-lab.html" hreflang="zh" lang="zh" aria-label="中文">中文</a></div>
 </div>
 <main id="main">
 
@@ -45,15 +46,26 @@
       <h1 class="display d-l" data-lines>Plot Lab</h1>
       <p style="margin-top:6px;max-width:27em">Shape a first idea of your project, then send it to the architects.</p>
     </div>
+    <div class="lab-compass" role="img" aria-label="Compass showing north"><i aria-hidden="true"><b>N</b></i></div>
     <p class="lab-hint">Drag to turn · Scroll or pinch to zoom</p>
+    <p class="lab-credit hide">Imagery © Esri, Maxar, Earthstar Geographics</p>
   </div>
-  <aside class="lab-panel" aria-label="Study controls">
+  <aside class="lab-panel" data-lenis-prevent aria-label="Study controls">
+    <div class="lab-plot">
+      <strong id="plotLabel"></strong>
+      <span id="plotDetail"></span>
+      <div class="lab-plot-actions"><button class="mini" id="plotPick" type="button"></button><button class="link" id="plotReset" type="button">Back to the sample</button></div>
+    </div>
     <div class="seg" role="group" aria-label="Type of project"><button type="button" data-program="villa">Villa</button><button type="button" data-program="apartments">Apartments</button><button type="button" data-program="hotel">Hotel</button></div>
-    <div class="ctl"><label for="labArea"><span>Plot size</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
-    <div class="ctl"><label for="labCover"><span>Coverage of the plot</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"></div>
+    <div class="ctl" id="labAreaCtl"><label for="labArea"><span>Plot size</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
+    <div class="ctl"><label for="labCover"><span>Coverage of the plot</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"><p class="note lab-fit hide" id="labFitNote" role="status"></p></div>
     <div class="ctl"><label for="labFloors"><span>Levels</span><output id="outFloors"></output></label><input id="labFloors" type="range" step="1"></div>
-    <div class="ctl"><label for="labHour"><span>Time of day</span><output id="outHour"></output></label><input id="labHour" type="range" min="6" max="21" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">Play the day</button></div>
+    <div class="ctl"><label for="labDay"><span>Date</span><output id="outDay"></output></label><input id="labDay" type="range" min="1" max="366" step="1"><div class="day-shortcuts"><button type="button" data-day="today">Today</button><button type="button" data-day="june"></button><button type="button" data-day="december"></button></div></div>
+    <div class="ctl"><label for="labHour"><span>Time at the plot</span><output id="outHour"></output></label><input id="labHour" type="range" min="0" max="24" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">Play the day</button>
+      <p class="sun-facts"><span id="outSunTimes"></span><span id="outSunNow"></span></p></div>
     <div class="seg" role="group" aria-label="Level of finish"><button type="button" data-finish="standard">Standard</button><button type="button" data-finish="premium">Premium</button><button type="button" data-finish="highend">High-end</button></div>
+    <p class="note">Illustrative only, using sample rates that MMA will confirm. Real limits come from your plot's planning rules, and the plot you draw is not a survey. Capacity assumes 85 m² per apartment and 40 m² per room. The sun's position is calculated for the place and date. The ground is shown flat, with a clear sky, and without shade from neighbouring buildings or hills.</p>
+    <div class="lab-sticky">
     <div class="lab-res" aria-live="polite">
       <div><span>Floor area</span><strong id="resFloor"></strong></div>
       <div><span>Rough capacity</span><strong id="resCap"></strong></div>
@@ -64,9 +76,33 @@
       <button class="mini" id="labSave" type="button">Save option</button>
       <button class="mini" id="labShare" type="button">Copy link</button>
     </div>
-    <p class="note">Illustrative only, using sample rates that MMA will confirm. Real limits come from your plot's planning rules. Capacity assumes 85 m² per apartment and 40 m² per room. Sun position is indicative.</p>
+    </div>
   </aside>
 </section>
+<dialog class="plot-dialog" id="plotDialog" data-lenis-prevent aria-labelledby="plotDialogTitle">
+  <div class="plot-head">
+    <h2 class="display d-s" id="plotDialogTitle">Find your plot</h2>
+    <form id="plotSearch" role="search">
+      <input id="plotQuery" type="search" autocomplete="off" aria-label="Address, place or coordinates" placeholder="Address, place or coordinates">
+      <button class="mini" type="submit">Search</button>
+    </form>
+    <button class="mini" id="plotGps" type="button">Use my location</button>
+    <div class="seg" role="group" aria-label="Map type"><button type="button" data-layer="satellite" aria-pressed="true">Satellite</button><button type="button" data-layer="street" aria-pressed="false">Streets</button></div>
+  </div>
+  <div class="plot-results" id="plotResults"></div>
+  <div class="plot-map-wrap"><div id="plotMap" dir="ltr"></div><span class="plot-cross" aria-hidden="true"></span></div>
+  <div class="plot-foot">
+    <p id="plotStatus" role="status"></p>
+    <div class="plot-tools">
+      <button class="mini" id="plotAddCentre" type="button">Add a corner at the crosshair</button>
+      <button class="mini" id="plotUndo" type="button">Undo</button>
+      <button class="mini" id="plotClear" type="button">Clear</button>
+      <button class="mini" id="plotCancel" type="button">Cancel</button>
+      <button class="btn" id="plotUse" type="button" disabled>Use this plot <span class="arr" aria-hidden="true">&rarr;</span></button>
+    </div>
+    <p class="note">Searches go to OpenStreetMap and map views to the map providers. MMA only receives your plot if you send the study.</p>
+  </div>
+</dialog>
 <section class="section wrap white hide" id="labCompare" style="padding-block:clamp(40px,6vw,90px)">
   <h2 class="display d-m" style="margin-bottom:22px">Your options, side by side.</h2>
   <div class="table-scroll"><table class="compare-table"><thead><tr><th scope=col>Option</th><th scope=col>Type</th><th scope=col>Plot</th><th scope=col>Coverage</th><th scope=col>Levels</th><th scope=col>Floor area</th><th scope=col>Capacity</th><th scope=col>Finish</th><th scope=col>Budget (MAD)</th><th scope=col></th></tr></thead><tbody id="labCompareBody"></tbody></table></div>
@@ -102,7 +138,7 @@
   <button class="dock-btn" type="button" aria-expanded="false" aria-label="Talk to an architect"><i></i><span>Talk to an architect</span></button>
 </div>
 <div class="cursor" aria-hidden="true"></div>
-<script>window.MMA_I18N={"lab": {"rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]}, "ground": "G", "units": "apartments", "rooms": "rooms", "oneVilla": "1 villa", "play": "Play the day", "pause": "Pause", "share": "Copy link", "copied": "Link copied", "linkInBar": "Link is in the address bar", "save": "Save option", "saved": "Saved", "option": "Option", "remove": "Remove", "programs": {"villa": "Villa", "apartments": "Apartments", "hotel": "Hotel"}, "finishes": {"standard": "Standard", "premium": "Premium", "highend": "High-end"}, "contactUrl": "../en/contact.html", "locale": "en-GB", "m2": "m²", "mad": "MAD", "noGl": "3D isn't available in this browser. You can still use the controls to see the figures."}}</script>
+<script>window.MMA_I18N={"lab": {"rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]}, "ground": "G", "units": "apartments", "rooms": "rooms", "oneVilla": "1 villa", "play": "Play the day", "pause": "Pause", "share": "Copy link", "copied": "Link copied", "linkInBar": "Link is in the address bar", "save": "Save option", "saved": "Saved", "option": "Option", "remove": "Remove", "programs": {"villa": "Villa", "apartments": "Apartments", "hotel": "Hotel"}, "finishes": {"standard": "Standard", "premium": "Premium", "highend": "High-end"}, "contactUrl": "../en/contact.html", "locale": "en-GB", "dateLocale": "en-GB", "m2": "m²", "mad": "MAD", "plotSample": "Sample plot, Tangier", "plotSampleNote": "The sun is real for Tangier. The square plot, road and neighbours are only illustrative.", "plotYours": "Your plot", "plotPick": "Select my plot on a map", "plotChange": "Change the plot", "studyPlot": "Plot", "fitLimit": "The shape of this plot limits a rectangular building to about {pct} % coverage. The figures use that.", "sunrise": "Sunrise", "sunset": "Sunset", "noRiseSet": "No sunrise or sunset on this date", "sunNow": "Sun {alt}° above the horizon, {az}° from north", "sunBelow": "The sun is below the horizon", "map": {"imagery": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", "imageryCredit": "Imagery © Esri, Maxar, Earthstar Geographics", "street": "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "streetCredit": "© <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a>", "drawHint": "Find your plot, then click each of its corners.", "moreCorners": "Keep going: a plot needs at least 3 corners.", "zoomIn": "Zooming in. Click again to place the corner accurately.", "measured": "Measured area: about {area} m². Drag a corner to adjust it.", "crossing": "The sides of the plot cross. Move a corner or undo the last one.", "tooSmall": "This is smaller than {n} m². Check the corners.", "tooLarge": "This is larger than {n} m², the most the Plot Lab can study.", "searchNone": "Nothing found. Try a nearby town or paste coordinates.", "searchFail": "The search isn't responding. Try moving the map by hand.", "gpsFail": "Your location isn't available. Check the browser's permission or search instead.", "loadFail": "The map couldn't load. Check your connection and try again."}, "noGl": "3D isn't available in this browser. You can still use the controls to see the figures."}}</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>

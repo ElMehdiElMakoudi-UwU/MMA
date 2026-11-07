@@ -1,6 +1,10 @@
-/* Plot Lab: a live 3D massing model with a moving sun. */
+/* Plot Lab: a live 3D massing model on a real or sample plot, lit by the real sun. */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import {
+  sunPosition, sunTimes, clockToDate, offsetLabel, dayOfYear, toLocal, polygonArea,
+  footprintFor, localRectInPlot, encodePlot, decodePlot
+} from './plot-geo.js';
 
 const STOPS = [
   { h: 6, top: '#2b3a55', low: '#f0a77e', sun: '#ffb27a', power: 1.0, hemi: .55, glow: .5 },
@@ -20,6 +24,23 @@ function hourStops(h) {
   }
   return [STOPS[4], STOPS[5], 1];
 }
+
+/* Sky and light follow the sun's real height. Mornings and evenings have their own colours. */
+const RISING = [[-8, STOPS[5]], [-.5, STOPS[0]], [9, STOPS[1]], [28, STOPS[2]]];
+const SETTING = [[-8, STOPS[5]], [-.5, STOPS[4]], [9, STOPS[3]], [28, STOPS[2]]];
+function altitudeStops(alt, list) {
+  if (alt <= list[0][0]) return [list[0][1], list[0][1], 0];
+  for (let i = 0; i < list.length - 1; i++) {
+    if (alt <= list[i + 1][0]) return [list[i][1], list[i + 1][1], (alt - list[i][0]) / (list[i + 1][0] - list[i][0])];
+  }
+  return [list[3][1], list[3][1], 0];
+}
+
+const M_PER_DEG = 111320;
+const tileX = (lng, n) => (lng + 180) / 360 * n;
+const tileY = (lat, n) => (1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2 * n;
+const tileLng = (x, n) => x / n * 360 - 180;
+const tileLat = (y, n) => Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n))) * 180 / Math.PI;
 
 function seeded(n) { const x = Math.sin(n * 91.17) * 43758.5453; return x - Math.floor(x); }
 
@@ -59,6 +80,7 @@ export function createScene(host, opts = {}) {
     ground: new THREE.MeshStandardMaterial({ color: '#bfbcb2', roughness: 1 }),
     road: new THREE.MeshStandardMaterial({ color: '#a4a6a3', roughness: .95 }),
     plot: new THREE.MeshStandardMaterial({ color: '#efe6d6', roughness: 1 }),
+    plotReal: new THREE.MeshStandardMaterial({ color: '#f0a35e', roughness: 1, transparent: true, opacity: .14, depthWrite: false }),
     garden: new THREE.MeshStandardMaterial({ color: '#7f9568', roughness: 1 }),
     plaster: new THREE.MeshStandardMaterial({ color: '#f4f0e8', roughness: .82 }),
     wood: new THREE.MeshStandardMaterial({ color: '#8a5d3b', roughness: .7 }),
@@ -71,12 +93,12 @@ export function createScene(host, opts = {}) {
 
   const ground = new THREE.Mesh(new THREE.CircleGeometry(900, 48), M.ground);
   ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -.06;
+  ground.position.y = -.6;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  const site = new THREE.Group(), building = new THREE.Group();
-  scene.add(site, building);
+  const site = new THREE.Group(), building = new THREE.Group(), extras = new THREE.Group(), imagery = new THREE.Group();
+  scene.add(site, building, extras, imagery);
 
   const box = (w, h, d, mat, x = 0, y = 0, z = 0, parent = building) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
@@ -98,19 +120,76 @@ export function createScene(host, opts = {}) {
     c.position.set(x, 3.3 * s, z); c.castShadow = true; c.scale.y = 1.15; parent.add(c);
   };
 
-  /* The plot, road, neighbours and planting scale with the plot */
-  let lastSide = 0;
-  function buildSite(side) {
-    if (Math.abs(side - lastSide) < .01) return;
-    lastSide = side;
+  const flatShape = points => {
+    const shape = new THREE.Shape(points.map(p => new THREE.Vector2(p[0], -p[1])));
+    const m = new THREE.Mesh(new THREE.ShapeGeometry(shape));
+    m.rotation.x = -Math.PI / 2;
+    m.receiveShadow = true;
+    return m;
+  };
+
+  /* Satellite photo of the real surroundings, laid on the ground around the plot */
+  let imageryRun = 0;
+  function clearImagery() {
+    imageryRun++;
+    while (imagery.children.length) {
+      const m = imagery.children.pop();
+      m.geometry.dispose();
+      if (m.material.map) m.material.map.dispose();
+      m.material.dispose();
+    }
+  }
+  /* A sharp layer around the plot, and a wider, coarser one out to the horizon */
+  const plotSpan = points => Math.max(Math.max(...points.map(p => p[0])) - Math.min(...points.map(p => p[0])), Math.max(...points.map(p => p[1])) - Math.min(...points.map(p => p[1])));
+  const imageryZoom = span => (span > 500 ? 16 : span > 250 ? 17 : 18);
+  const REACH = 3;
+  const tileMetres = (zoom, lat) => 40075016 / 2 ** zoom * Math.cos(lat * Math.PI / 180);
+  const imageryRadius = (span, lat) => tileMetres(imageryZoom(span) - 2, lat) * (REACH + .5);
+  function loadImagery(plot) {
+    clearImagery();
+    if (!opts.imageryUrl) return;
+    const run = imageryRun, span = plotSpan(plot.points), inner = imageryZoom(span);
+    const k = Math.cos(plot.lat0 * Math.PI / 180), loader = new THREE.TextureLoader();
+    [[inner, -.2], [inner - 2, -.4]].forEach(([zoom, y]) => {
+      const n = 2 ** zoom, cx = Math.floor(tileX(plot.lng0, n)), cy = Math.floor(tileY(plot.lat0, n));
+      for (let ty = cy - REACH; ty <= cy + REACH; ty++) {
+        for (let tx = cx - REACH; tx <= cx + REACH; tx++) {
+          const west = (tileLng(tx, n) - plot.lng0) * M_PER_DEG * k, east = (tileLng(tx + 1, n) - plot.lng0) * M_PER_DEG * k;
+          const north = -(tileLat(ty, n) - plot.lat0) * M_PER_DEG, south = -(tileLat(ty + 1, n) - plot.lat0) * M_PER_DEG;
+          const url = opts.imageryUrl.replace('{z}', zoom).replace('{x}', tx).replace('{y}', ty);
+          loader.load(url, tex => {
+            if (run !== imageryRun) { tex.dispose(); return; }
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            const m = new THREE.Mesh(new THREE.PlaneGeometry(east - west, south - north), new THREE.MeshStandardMaterial({ map: tex, roughness: 1, color: '#c9c9c9' }));
+            m.rotation.x = -Math.PI / 2;
+            m.position.set((west + east) / 2, y, (north + south) / 2);
+            m.receiveShadow = true;
+            imagery.add(m);
+            kick();
+          }, undefined, () => {});
+        }
+      }
+    });
+  }
+
+  /* A real plot sits on its own surroundings. The sample keeps its illustrative road, neighbours and planting. */
+  let siteKey = '';
+  function buildSite(s, points) {
+    const key = s.plot ? s.plot.key : `sample ${s.area}`;
+    if (key === siteKey) return;
+    const wasReal = siteKey && !siteKey.startsWith('sample');
+    siteKey = key;
     clear(site);
-    const h = side / 2;
-    const plot = new THREE.Mesh(new THREE.PlaneGeometry(side, side), M.plot);
-    plot.rotation.x = -Math.PI / 2; plot.position.y = .02; plot.receiveShadow = true; site.add(plot);
-    const edge = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-h, .1, -h), new THREE.Vector3(h, .1, -h), new THREE.Vector3(h, .1, h), new THREE.Vector3(-h, .1, h)
-    ]), new THREE.LineDashedMaterial({ color: '#f0a35e', dashSize: 1.6, gapSize: 1 }));
+    const plot = flatShape(points);
+    plot.material = s.plot ? M.plotReal : M.plot;
+    plot.position.y = .02;
+    site.add(plot);
+    const edge = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points.map(p => new THREE.Vector3(p[0], .1, p[1]))), new THREE.LineDashedMaterial({ color: '#f0a35e', dashSize: 1.6, gapSize: 1 }));
     edge.computeLineDistances(); site.add(edge);
+    if (s.plot) { loadImagery(s.plot); return; }
+    if (wasReal) clearImagery();
+    const side = Math.sqrt(s.area), h = side / 2;
     const road = new THREE.Mesh(new THREE.PlaneGeometry(1400, 11), M.road);
     road.rotation.x = -Math.PI / 2; road.position.set(0, .01, h + 8); road.receiveShadow = true; site.add(road);
     const road2 = new THREE.Mesh(new THREE.PlaneGeometry(9, 1400), M.road);
@@ -133,16 +212,18 @@ export function createScene(host, opts = {}) {
   /* Massing for each kind of investment */
   function buildMassing(s) {
     clear(building);
-    const side = Math.sqrt(s.area), fp = s.area * s.cover / 100;
-    const ratio = s.program === 'apartments' ? 1.4 : s.program === 'hotel' ? 1.6 : 1.3;
-    const w = Math.min(Math.sqrt(fp * ratio), side), d = Math.min(fp / w, side);
-    buildSite(side);
+    clear(extras);
+    const fit = footprintFor(s), { w, d, points } = fit;
+    buildSite(s, points);
+    /* The building turns to follow the plot's longest side */
+    building.position.set(fit.center[0], 0, fit.center[1]);
+    building.rotation.y = fit.rotation;
+    if (w < 2.5 || d < 2.5) return 0;
     const floors = Math.max(1, Math.round(s.floors));
 
     if (s.program === 'villa') {
       const fh = 3.3;
-      const offsetZ = (side - d) / 2 - Math.min(side * .12, 3);
-      const cz = -offsetZ * .55;
+      const cz = 0;
       let y = 0;
       for (let i = 0; i < floors; i++) {
         const shrink = i === 0 ? 1 : (i === 1 ? .78 : .55), fw = w * shrink, fd = d * (i === 0 ? 1 : .86);
@@ -152,15 +233,17 @@ export function createScene(host, opts = {}) {
         box(Math.max(.9, fw * .22), fh - .3, fd * .9, i % 2 ? M.wood : M.plaster, fx + fw * .36, y, fz);
         y += fh;
       }
-      /* Pool and garden in the open part of the plot */
-      const open = side / 2 - (cz + d / 2);
-      if (open > 4) {
-        const gardenD = open - .5;
-        const g = new THREE.Mesh(new THREE.PlaneGeometry(side - 1, gardenD), M.garden);
-        g.rotation.x = -Math.PI / 2; g.position.set(0, .04, side / 2 - gardenD / 2 - .25); g.receiveShadow = true; building.add(g);
-        const pd = Math.min(gardenD * .45, 5), pw = Math.min(w * .75, 12);
+      /* The garden fills the plot, with a pool in front of the house when there is room */
+      const g = flatShape(points);
+      g.material = M.garden;
+      g.position.y = .04;
+      extras.add(g);
+      for (const scale of [1, .75, .5]) {
+        const pd = 5 * scale, pw = Math.min(w * .75, 12) * scale, pz = d / 2 + pd / 2 + 1.1;
+        if (!localRectInPlot(points, fit, 0, pz, pw, pd)) continue;
         const p = new THREE.Mesh(new THREE.PlaneGeometry(pw, pd), M.water);
-        p.rotation.x = -Math.PI / 2; p.position.set(0, .07, cz + d / 2 + pd / 2 + 1.1); building.add(p);
+        p.rotation.x = -Math.PI / 2; p.position.set(0, .07, pz); building.add(p);
+        break;
       }
       return y;
     }
@@ -199,8 +282,7 @@ export function createScene(host, opts = {}) {
   }
 
   /* Sun, sky and window light */
-  function setHour(h) {
-    const [a, b, t] = hourStops(h);
+  function applyLight(a, b, t) {
     mix(a.top, b.top, t, skyUniforms.top.value);
     mix(a.low, b.low, t, skyUniforms.low.value);
     scene.fog.color.copy(skyUniforms.low.value);
@@ -211,10 +293,22 @@ export function createScene(host, opts = {}) {
     const glow = THREE.MathUtils.lerp(a.glow, b.glow, t);
     M.glass.emissiveIntensity = glow * 1.15;
     M.water.emissiveIntensity = glow * .55;
+  }
+  let sunReach = 340;
+  /* The home page teaser has no date or place, so it keeps a simple day arc */
+  function setHour(h) {
+    applyLight(...hourStops(h));
     const p = (Math.max(6, Math.min(20.2, h)) - 6) / 14.2;
     const az = THREE.MathUtils.lerp(-1.75, 1.75, p), el = Math.sin(p * Math.PI) * 1.02 + .05;
-    const R = 340;
-    sun.position.set(Math.sin(az) * Math.cos(el) * R, Math.sin(el) * R, Math.cos(az) * Math.cos(el) * R * .9 + 40);
+    sun.position.set(Math.sin(az) * Math.cos(el) * 340, Math.sin(el) * 340, Math.cos(az) * Math.cos(el) * 340 * .9 + 40);
+  }
+  /* The real sun: azimuth clockwise from north, with north along -z */
+  function setSun({ altitude, azimuth }) {
+    const az = azimuth * Math.PI / 180, afternoon = Math.sin(az) < 0;
+    applyLight(...altitudeStops(altitude, afternoon ? SETTING : RISING));
+    sun.intensity *= THREE.MathUtils.smoothstep(altitude, -1, 2);
+    const el = Math.max(altitude, 1) * Math.PI / 180;
+    sun.position.set(Math.sin(az) * Math.cos(el), Math.sin(el), -Math.cos(az) * Math.cos(el)).multiplyScalar(sunReach);
   }
 
   /* Camera follows the size of the project */
@@ -226,20 +320,35 @@ export function createScene(host, opts = {}) {
     controls.enablePan = false; controls.maxPolarAngle = Math.PI * .485; controls.minPolarAngle = .35;
     controls.minDistance = 30; controls.maxDistance = 480;
   }
+  const baseFar = camera.far;
   let state = null, height = 10, autoSpin = opts.spin || 0, angle = opts.angle ?? .72;
   function setState(next) {
-    const changed = !state || ['program', 'area', 'cover', 'floors'].some(k => state[k] !== next[k]);
+    const changed = !state || ['program', 'area', 'cover', 'floors', 'plot'].some(k => state[k] !== next[k]);
+    const plotChanged = state && state.plot !== next.plot;
     state = { ...next };
     if (changed) {
       height = buildMassing(state);
-      const side = Math.sqrt(state.area);
-      const cover = Math.max(side * 2.15, height * 2.5, 38);
+      const { points } = footprintFor(state);
+      const span = plotSpan(points);
+      /* A real plot has no filler around it, so the camera can come closer */
+      const cover = Math.max(span * (state.plot ? 1.35 : 2.15), height * 2.5, 38);
       camGoal.dist = cover * (opts.zoom || 1.4);
       camGoal.y = height * .42;
-      const shadow = Math.max(side, height) * 1.9 + 30, c = sun.shadow.camera;
-      c.left = -shadow; c.right = shadow; c.top = shadow; c.bottom = -shadow; c.near = 10; c.far = 900; c.updateProjectionMatrix();
+      if (plotChanged && controls) controls.userZoomed = false;
+      /* Large plots need the camera, sky, ground and shadows to reach further */
+      const edge = state.plot ? imageryRadius(span, state.plot.lat0) : 0;
+      const world = Math.max(1, Math.max(camGoal.dist * 2.4, edge * 1.3) / 900);
+      sky.scale.setScalar(world); ground.scale.setScalar(world);
+      /* The imagery fades into the horizon before it ends */
+      scene.fog.far = state.plot ? edge * .9 : 860 * world;
+      scene.fog.near = state.plot ? Math.max(edge * .4, camGoal.dist * 1.15) : 300 * world;
+      camera.far = baseFar * world; camera.near = Math.max(1, camGoal.dist * .02); camera.updateProjectionMatrix();
+      if (controls) controls.maxDistance = Math.max(480, camGoal.dist * (state.plot ? 1.5 : 2));
+      const shadow = Math.max(span, height) * 1.9 + 30, c = sun.shadow.camera;
+      sunReach = Math.max(340, shadow * 1.3);
+      c.left = -shadow; c.right = shadow; c.top = shadow; c.bottom = -shadow; c.near = 10; c.far = sunReach * 2.7; c.updateProjectionMatrix();
     }
-    setHour(state.hour);
+    if (state.sun) setSun(state.sun); else setHour(state.hour);
     kick();
   }
 
@@ -255,6 +364,7 @@ export function createScene(host, opts = {}) {
   const ro = new ResizeObserver(size);
   ro.observe(host);
 
+  const look = new THREE.Vector3();
   let running = true, visible = true, raf = 0, last = 0;
   function kick() { if (!raf && visible) raf = requestAnimationFrame(loop); }
   function loop(now) {
@@ -278,6 +388,7 @@ export function createScene(host, opts = {}) {
       camera.lookAt(target);
     }
     renderer.render(scene, camera);
+    if (opts.onBearing) { camera.getWorldDirection(look); opts.onBearing(Math.atan2(look.x, -look.z)); }
     const settling = Math.abs(dist - camGoal.dist) > .05 || Math.abs(target.y - (camGoal.y || 8)) > .02;
     if (autoSpin || settling || controls) raf = requestAnimationFrame(loop);
   }
@@ -314,28 +425,47 @@ export function mountTeaser(el) {
 }
 
 /* The full Plot Lab page */
+const SAMPLE_PLACE = { lat: 35.7595, lng: -5.834, tz: 'Africa/Casablanca' };
+const ZONE_LOOKUP = 'https://cdn.jsdelivr.net/npm/tz-lookup@6.1.25/+esm';
+
 export function mountLab(root) {
   const I = window.MMA_I18N.lab;
   const $ = s => root.querySelector(s);
-  const inputs = { area: $('#labArea'), cover: $('#labCover'), floors: $('#labFloors'), hour: $('#labHour') };
+  const inputs = { area: $('#labArea'), cover: $('#labCover'), floors: $('#labFloors'), hour: $('#labHour'), day: $('#labDay') };
   const LIMITS = {
     villa: { area: [200, 1500, 600], cover: [20, 50, 35], floors: [1, 3, 2] },
     apartments: { area: [200, 3500, 900], cover: [30, 80, 60], floors: [2, 16, 7] },
     hotel: { area: [500, 5000, 2400], cover: [25, 70, 40], floors: [2, 10, 5] }
   };
   const RATES = I.rates;
-  const state = { program: 'apartments', finish: 'standard', hour: 15.5, area: 900, cover: 60, floors: 7 };
+  const YEAR = new Date().getFullYear();
+  const yearDays = dayOfYear(new Date(YEAR, 11, 31));
+  /* A date that has already passed this year means its next occurrence, since the building is still to come */
+  const today = dayOfYear();
+  const yearOf = day => (day < today ? YEAR + 1 : YEAR);
+  const state = { program: 'apartments', finish: 'standard', hour: 15.5, day: dayOfYear(), area: 900, cover: 60, floors: 7, plot: null, sun: null };
+  let place = { ...SAMPLE_PLACE };
   const q = new URLSearchParams(location.search);
   if (LIMITS[q.get('p')]) {
     state.program = q.get('p');
     Object.assign(state, { area: +q.get('a') || LIMITS[state.program].area[2], cover: +q.get('c') || LIMITS[state.program].cover[2], floors: +q.get('f') || LIMITS[state.program].floors[2] });
     if (RATES[q.get('finish')]) state.finish = q.get('finish');
     if (+q.get('h')) state.hour = +q.get('h');
+    if (+q.get('d') >= 1 && +q.get('d') <= yearDays) state.day = Math.round(+q.get('d'));
   }
+
+  /* The compass turns with the camera */
+  const needle = $('.lab-compass i');
+  let shownBearing = 1e9;
+  const onBearing = b => {
+    if (Math.abs(b - shownBearing) < .003) return;
+    shownBearing = b;
+    needle.style.transform = `rotate(${-b}rad)`;
+  };
 
   let scene = null;
   try {
-    scene = createScene($('.lab-canvas'), { offsetX: w => (w > 1040 ? Math.min(w * .13, 200) * (document.documentElement.dir === 'rtl' ? -1 : 1) : 0), zoom: 2 });
+    scene = createScene($('.lab-canvas'), { offsetX: w => (w > 1040 ? Math.min(w * .13, 200) * (document.documentElement.dir === 'rtl' ? -1 : 1) : 0), zoom: 2, imageryUrl: I.map.imagery, onBearing });
   } catch (e) {
     $('.lab-canvas').innerHTML = `<p class="lab-hint">${I.noGl}</p>`;
   }
@@ -343,11 +473,14 @@ export function mountLab(root) {
   const loc = I.locale;
   const fmt = n => Math.round(n).toLocaleString(loc);
   const money = n => fmt(Math.round(n / 1e4) * 1e4);
-  const hourTxt = h => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.round((h % 1) * 60)).padStart(2, '0')}`;
-  const levels = f => (f === 1 ? I.ground : `${I.ground}+${f - 1}`);
+  const hourTxt = h => { const m = Math.round(h * 60) % 1440; return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+  const levelCode = f => (f === 1 ? I.ground : `${I.ground}+${f - 1}`);
+  const levels = f => (I.levelsText ? I.levelsText.replace('{n}', f) : levelCode(f));
+  const dateTxt = day => new Date(Date.UTC(yearOf(day), 0, day)).toLocaleDateString(I.dateLocale, { day: 'numeric', month: 'long', timeZone: 'UTC' });
 
   function calc(s = state) {
-    const fp = s.area * s.cover / 100, total = fp * s.floors;
+    const fit = footprintFor(s), wanted = s.area * s.cover / 100;
+    const fp = Math.min(fit.area, wanted), total = fp * s.floors;
     const [lo, hi] = RATES[s.finish];
     const buildLo = total * lo, buildHi = total * hi;
     const budgetLo = buildLo * (1 + .06 + .1), budgetHi = buildHi * (1 + .12 + .1);
@@ -355,56 +488,175 @@ export function mountLab(root) {
     if (s.program === 'apartments') cap = `${fmt(Math.floor(total * .8 / 85))} ${I.units}`;
     else if (s.program === 'hotel') cap = `${fmt(Math.floor(total * .6 / 40))} ${I.rooms}`;
     else cap = I.oneVilla;
-    return { fp, total, cap, budgetLo, budgetHi };
+    return { fp, total, cap, budgetLo, budgetHi, limited: fp < wanted * .99 };
   }
   function shareUrl() {
     const u = new URL(location.href);
-    u.search = new URLSearchParams({ p: state.program, a: state.area, c: state.cover, f: state.floors, h: state.hour, finish: state.finish }).toString();
+    u.search = new URLSearchParams({ p: state.program, a: state.area, c: state.cover, f: state.floors, h: state.hour, d: state.day, finish: state.finish }).toString();
+    /* The plot stays in the hash, so its location is never sent to our server just by opening a link */
+    u.hash = state.plot ? `plot=${state.plot.key}` : '';
     return u.href;
   }
+
+  /* Sunrise and sunset are worked out once per place and day, then set the range of the time slider */
+  let timesKey = '', times = null;
+  function dayTimes() {
+    const key = `${place.lat},${place.lng},${place.tz},${state.day}`;
+    if (key !== timesKey) { timesKey = key; times = sunTimes(yearOf(state.day), state.day, place); }
+    return times;
+  }
+  function updateSun() {
+    const { rise, set } = dayTimes();
+    const min = rise === null ? 0 : Math.max(0, Math.floor((rise - .75) * 4) / 4);
+    const max = set === null ? 24 : Math.min(24, Math.ceil((set + .75) * 4) / 4);
+    inputs.hour.min = min; inputs.hour.max = max;
+    state.hour = Math.max(min, Math.min(max, state.hour));
+    state.sun = sunPosition(clockToDate(yearOf(state.day), state.day, state.hour, place), place.lat, place.lng);
+  }
+
   function render() {
+    updateSun();
     Object.keys(inputs).forEach(k => { inputs[k].value = state[k]; });
     const c = calc();
     $('#outArea').textContent = `${fmt(state.area)} ${I.m2}`;
     $('#outCover').textContent = `${state.cover} %`;
     $('#outFloors').textContent = levels(state.floors);
     $('#outHour').textContent = hourTxt(state.hour);
+    $('#outDay').textContent = dateTxt(state.day);
     $('#resFloor').textContent = `${fmt(c.total)} ${I.m2}`;
     $('#resCap').textContent = c.cap;
     $('#resBudget').textContent = `${money(c.budgetLo)} – ${money(c.budgetHi)} ${I.mad}`;
     root.querySelectorAll('[data-program]').forEach(b => b.setAttribute('aria-pressed', b.dataset.program === state.program));
     root.querySelectorAll('[data-finish]').forEach(b => b.setAttribute('aria-pressed', b.dataset.finish === state.finish));
+
+    /* Plot summary */
+    const real = !!state.plot;
+    $('#plotLabel').textContent = real ? I.plotYours : I.plotSample;
+    const detail = $('#plotDetail');
+    detail.textContent = real ? `${fmt(state.area)} ${I.m2} · ` : I.plotSampleNote;
+    if (real) {
+      /* Coordinates keep their reading order inside Arabic text */
+      const coords = document.createElement('bdi');
+      coords.dir = 'ltr';
+      coords.textContent = `${state.plot.lat0.toFixed(5)}, ${state.plot.lng0.toFixed(5)}`;
+      detail.append(coords);
+    }
+    $('#plotPick').textContent = real ? I.plotChange : I.plotPick;
+    $('#plotReset').classList.toggle('hide', !real);
+    $('#labAreaCtl').classList.toggle('hide', real);
+    $('.lab-credit').classList.toggle('hide', !real);
+    const fitNote = $('#labFitNote');
+    fitNote.classList.toggle('hide', !c.limited);
+    if (c.limited) fitNote.textContent = I.fitLimit.replace('{pct}', Math.round(c.fp / state.area * 100));
+
+    /* Sun summary */
+    const { rise, set } = dayTimes(), sun = state.sun;
+    const zone = `${place.tz ? '' : '≈ '}${offsetLabel(yearOf(state.day), state.day, place)}`;
+    $('#outSunTimes').textContent = rise === null || set === null
+      ? `${I.noRiseSet} · ${zone}`
+      : `${I.sunrise} ${hourTxt(rise)} · ${I.sunset} ${hourTxt(set)} · ${zone}`;
+    $('#outSunNow').textContent = sun.altitude > 0
+      ? I.sunNow.replace('{alt}', Math.round(sun.altitude)).replace('{az}', Math.round(sun.azimuth))
+      : I.sunBelow;
+
     if (scene) scene.setState(state);
     const type = { villa: 'home', apartments: 'rental', hotel: 'hospitality' }[state.program];
-    const study = `${fmt(state.area)} ${I.m2}, ${state.cover} %, ${levels(state.floors)}, ${fmt(c.total)} ${I.m2}`;
-    $('#labSend').href = `${I.contactUrl}?type=${type}&study=${encodeURIComponent(study)}`;
+    let study = `${fmt(state.area)} ${I.m2}, ${state.cover} %, ${levelCode(state.floors)}, ${fmt(c.total)} ${I.m2}`;
+    if (real) study += ` · ${I.studyPlot}: ${state.plot.lat0.toFixed(5)}, ${state.plot.lng0.toFixed(5)} · ${shareUrl()}`;
+    /* A language without a contact form sends the study by WhatsApp */
+    $('#labSend').href = I.send
+      ? `https://wa.me/${I.send.whatsapp}?text=${encodeURIComponent(`${I.send.intro}\n${I.send.programs[state.program]}: ${study}`)}`
+      : `${I.contactUrl}?type=${type}#study=${encodeURIComponent(study)}`;
   }
   function setLimits() {
     const L = LIMITS[state.program];
     ['area', 'cover', 'floors'].forEach(k => {
       inputs[k].min = L[k][0]; inputs[k].max = L[k][1];
+      /* A drawn plot's area is measured, so the sample limits don't apply to it */
+      if (k === 'area' && state.plot) return;
       state[k] = Math.max(L[k][0], Math.min(L[k][1], state[k]));
     });
   }
-  ['area', 'cover', 'floors', 'hour'].forEach(k => inputs[k].addEventListener('input', () => { state[k] = Number(inputs[k].value); render(); }));
+
+  /* The clock at the plot depends on its time zone, found from its coordinates */
+  let zoneLookup = null;
+  const loadZones = () => {
+    zoneLookup = zoneLookup || import(ZONE_LOOKUP).then(m => m.default).catch(() => { zoneLookup = null; return null; });
+    return zoneLookup;
+  };
+  async function findZone(target) {
+    const lookup = await loadZones();
+    if (!lookup || target !== place) return;
+    try {
+      const tz = lookup(target.lat, target.lng);
+      new Intl.DateTimeFormat('en', { timeZone: tz });
+      target.tz = tz;
+      render();
+    } catch (e) { /* Keep the estimate from longitude, which the page marks with ≈ */ }
+  }
+
+  function applyPlot(latLngs) {
+    if (latLngs) {
+      const { points, lat0, lng0 } = toLocal(latLngs);
+      state.plot = { latLngs, points, lat0, lng0, key: encodePlot(latLngs) };
+      state.area = Math.round(polygonArea(points));
+      place = { lat: lat0, lng: lng0, tz: null };
+      findZone(place);
+    } else {
+      state.plot = null;
+      state.area = LIMITS[state.program].area[2];
+      place = { ...SAMPLE_PLACE };
+    }
+    setLimits();
+    render();
+  }
+
+  ['area', 'cover', 'floors', 'hour', 'day'].forEach(k => inputs[k].addEventListener('input', () => { state[k] = Number(inputs[k].value); render(); }));
   root.querySelectorAll('[data-program]').forEach(b => b.addEventListener('click', () => {
     state.program = b.dataset.program;
     const L = LIMITS[state.program];
-    state.area = L.area[2]; state.cover = L.cover[2]; state.floors = L.floors[2];
+    if (!state.plot) state.area = L.area[2];
+    state.cover = L.cover[2]; state.floors = L.floors[2];
     setLimits(); render();
   }));
   root.querySelectorAll('[data-finish]').forEach(b => b.addEventListener('click', () => { state.finish = b.dataset.finish; render(); }));
+
+  /* Date shortcuts */
+  inputs.day.max = yearDays;
+  const dayShortcuts = { today: dayOfYear(), june: dayOfYear(new Date(YEAR, 5, 21)), december: dayOfYear(new Date(YEAR, 11, 21)) };
+  root.querySelectorAll('[data-day]').forEach(b => {
+    const day = dayShortcuts[b.dataset.day];
+    if (b.dataset.day !== 'today') b.textContent = dateTxt(day);
+    b.addEventListener('click', () => { state.day = day; render(); });
+  });
+
+  /* Finding and drawing the plot */
+  $('#plotPick').addEventListener('click', async () => {
+    const btn = $('#plotPick');
+    btn.disabled = true;
+    loadZones();
+    try {
+      const { openPlotPicker } = await import('./plot-map.js');
+      const latLngs = await openPlotPicker({ I: I.map, locale: I.locale, initial: state.plot && state.plot.latLngs, centre: [place.lat, place.lng] });
+      if (latLngs) applyPlot(latLngs);
+    } catch (e) {
+      $('#plotDetail').textContent = I.map.loadFail;
+    }
+    btn.disabled = false;
+  });
+  $('#plotReset').addEventListener('click', () => applyPlot(null));
 
   /* Press and hold the sun button to play a full day */
   let play = 0;
   $('#labPlay').addEventListener('click', () => {
     if (play) { cancelAnimationFrame(play); play = 0; $('#labPlay').textContent = I.play; return; }
     $('#labPlay').textContent = I.pause;
-    if (state.hour >= 20.9) state.hour = 6;
+    if (state.hour >= +inputs.hour.max - .1) state.hour = +inputs.hour.min;
     const step = () => {
-      state.hour = Math.min(21, state.hour + .035);
+      const end = +inputs.hour.max;
+      state.hour = Math.min(end, state.hour + .035);
       render();
-      if (state.hour >= 21) { play = 0; $('#labPlay').textContent = I.play; return; }
+      if (state.hour >= end) { play = 0; $('#labPlay').textContent = I.play; return; }
       play = requestAnimationFrame(step);
     };
     play = requestAnimationFrame(step);
@@ -426,7 +678,7 @@ export function mountLab(root) {
     body.textContent = '';
     saved.forEach((o, i) => {
       const c = calc(o), tr = document.createElement('tr');
-      [`${I.option} ${String.fromCharCode(65 + i)}`, I.programs[o.program], `${fmt(o.area)} ${I.m2}`, `${o.cover} %`, levels(o.floors), `${fmt(c.total)} ${I.m2}`, c.cap, I.finishes[o.finish], `${money(c.budgetLo)} – ${money(c.budgetHi)}`].forEach(t => {
+      [`${I.option} ${String.fromCharCode(65 + i)}`, I.programs[o.program], `${fmt(o.area)} ${I.m2}`, `${Math.round(c.fp / o.area * 100)} %`, levels(o.floors), `${fmt(c.total)} ${I.m2}`, c.cap, I.finishes[o.finish], `${money(c.budgetLo)} – ${money(c.budgetHi)}`].forEach(t => {
         const td = document.createElement('td'); td.textContent = t; tr.append(td);
       });
       const td = document.createElement('td'), del = document.createElement('button');
@@ -446,5 +698,5 @@ export function mountLab(root) {
   });
 
   setLimits();
-  render();
+  applyPlot(decodePlot(new URLSearchParams(location.hash.slice(1)).get('plot')));
 }

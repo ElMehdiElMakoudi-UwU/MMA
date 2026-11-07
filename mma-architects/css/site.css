@@ -337,6 +337,49 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .mini{padding:9px 11px;border:1px solid var(--line-dark);font-size:13px;font-weight:500;flex:1;text-align:center}
 .mini:hover{border-color:var(--plaster)}
 .lab-hint{position:absolute;inset-inline-start:var(--gutter);bottom:18px;font-size:13px;color:var(--plaster);opacity:.85}
+.lab-compass{position:absolute;z-index:2;inset-inline-start:var(--gutter);bottom:50px;width:46px;height:46px;border-radius:50%;background:rgba(11,26,31,.62);border:1px solid var(--line-dark);pointer-events:none}
+.lab-compass i{position:absolute;inset:0;display:block;font-style:normal}
+.lab-compass i::before{content:"";position:absolute;left:50%;top:15px;margin-left:-4px;border:4px solid transparent;border-top:0;border-bottom:15px solid var(--sun)}
+.lab-compass b{position:absolute;left:0;right:0;top:2px;text-align:center;font-size:10px;line-height:12px;font-weight:600;color:var(--plaster)}
+.lab-sticky{position:sticky;bottom:-18px;margin:auto -18px -18px;padding:12px 18px 18px;background:rgba(11,26,31,.96);display:flex;flex-direction:column;gap:11px}
+.lab-credit{position:absolute;z-index:2;inset-inline-start:calc(var(--gutter) + 56px);bottom:50px;font-size:11px;color:var(--plaster);opacity:.8;text-shadow:0 1px 2px rgba(0,0,0,.7)}
+.lab-plot{display:flex;flex-direction:column;gap:4px;padding-bottom:12px;border-bottom:1px solid var(--line-dark)}
+.lab-plot strong{font-size:15px;font-weight:600}
+.lab-plot span{font-size:12px;line-height:1.4;color:var(--mist);font-variant-numeric:tabular-nums}
+.lab-plot-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:6px}
+.lab-plot-actions .mini{flex:1 1 auto;background:var(--plaster);color:var(--night);border-color:var(--plaster);font-weight:600}
+.lab-plot-actions .link{font-size:13px}
+.lab-fit{color:var(--sun);margin-top:2px}
+.day-shortcuts{display:flex;flex-wrap:wrap;gap:4px 14px}
+.day-shortcuts button{font-size:13px;font-weight:600;padding-block:3px;border-bottom:1px solid var(--line-dark)}
+.day-shortcuts button:hover{border-color:var(--plaster)}
+.sun-facts{display:flex;flex-direction:column;gap:2px;margin-top:7px;font-size:12px;line-height:1.4;color:var(--mist);font-variant-numeric:tabular-nums}
+.summary dd{overflow-wrap:anywhere}
+
+/* Plot Lab map */
+.plot-dialog{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:var(--night);color:var(--plaster)}
+.plot-dialog[open]{display:flex;flex-direction:column}
+.plot-dialog::backdrop{background:var(--night)}
+.plot-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px var(--gutter)}
+.plot-head h2{margin-inline-end:auto}
+.plot-head form{display:flex;gap:6px;flex:1 1 300px;max-width:520px}
+.plot-head input{flex:1;min-width:0;padding:9px 11px;background:rgba(239,237,232,.09);border:1px solid var(--line-dark);border-radius:0;color:inherit;font:inherit;font-size:16px}
+.plot-head input:focus{outline:2px solid var(--sun);outline-offset:1px}
+.plot-head .mini{flex:0 0 auto}
+.plot-results{display:flex;flex-direction:column;padding-inline:var(--gutter)}
+.plot-results button{padding:8px 0;text-align:start;font-size:14px;border-top:1px solid var(--line-dark)}
+.plot-results button:hover{color:var(--sun)}
+.plot-map-wrap{position:relative;flex:1;min-height:0}
+#plotMap{position:absolute;inset:0;background:#172a30}
+.plot-cross{position:absolute;z-index:500;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;pointer-events:none;background:linear-gradient(#fff,#fff) center/100% 1px no-repeat,linear-gradient(#fff,#fff) center/1px 100% no-repeat;opacity:.75;filter:drop-shadow(0 0 1px #000)}
+.plot-corner{background:var(--sun);border:2px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.6);cursor:move}
+.plot-foot{display:flex;flex-direction:column;gap:8px;padding:12px var(--gutter)}
+.plot-foot #plotStatus{min-height:1.4em;font-size:15px;font-weight:500}
+.plot-foot #plotStatus.err{color:var(--sun)}
+.plot-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.plot-tools .mini{flex:0 1 auto}
+.plot-tools .btn{margin-inline-start:auto}
+.plot-tools button:disabled{opacity:.4;cursor:not-allowed}
 .compare-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .compare-table th,.compare-table td{text-align:start;padding-block:11px;padding-inline:0 12px;border-bottom:1px solid var(--line-light);font-weight:400;white-space:nowrap}
 .compare-table thead th{font-weight:600}
@@ -420,6 +463,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .lab-title{max-width:none;top:76px;inset-inline-end:var(--gutter)}
   .lab-panel{position:static;width:auto;max-height:none;background:var(--night);border:0;backdrop-filter:none;padding-inline:var(--gutter)}
   .lab-hint{bottom:10px}
+  .lab-compass{bottom:36px}
+  .lab-credit{bottom:36px}
+  .lab-sticky{position:static;margin:0 -18px;padding-block:0;background:none}
   .values{grid-template-columns:1fr}
 }
 @media (max-width:720px){

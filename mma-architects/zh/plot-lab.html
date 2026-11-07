@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>地块实验室 · MMA Architects</title>
+<meta name="description" content="用 3D 测试您的地块：建筑体量、日照、建筑面积和初步预算。">
+<meta name="theme-color" content="#0B1A1F">
+<link rel="alternate" hreflang="fr" href="../fr/plot-lab.html">
+<link rel="alternate" hreflang="en" href="../en/plot-lab.html">
+<link rel="alternate" hreflang="es" href="../es/plot-lab.html">
+<link rel="alternate" hreflang="ar" href="../ar/plot-lab.html">
+<link rel="alternate" hreflang="x-default" href="../fr/plot-lab.html">
+<link rel="icon" href="../assets/logo-mma-white.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:SHRP,wght@0..100,200..600&family=Instrument+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/site.css">
+<script>document.documentElement.classList.add('js')</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<div class="wipe" aria-hidden="true"><img src="../assets/logo-mma-white.png" alt=""></div>
+<header class="head">
+  <a class="logo" href="../zh/index.html"><img src="../assets/logo-mma-white.png" alt="MMA, Mharrech Mribah Architects" width="500" height="172"></a>
+  <nav class="nav" aria-label="主导航">
+    <a href="../zh/index.html#services">服务范围</a><a href="../zh/index.html#work">项目案例</a><a href="../zh/plot-lab.html" aria-current=page>地块实验室</a><a href="../zh/index.html#process">合作流程</a>
+    <div class="lang" role="group" aria-label="语言"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/plot-lab.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><span aria-current="true" aria-label="中文">中文</span></div>
+    <a class="btn" href="../zh/index.html#contact">咨询项目</a>
+    <button class="menu-btn" type="button" aria-label="菜单" aria-expanded="false"><span></span><span></span></button>
+  </nav>
+</header>
+<div class="mobile-menu">
+  <a class="display" href="../zh/index.html#services">服务范围</a><a class="display" href="../zh/index.html#work">项目案例</a><a class="display" href="../zh/plot-lab.html">地块实验室</a><a class="display" href="../zh/index.html#process">合作流程</a>
+  <a class="display" href="../zh/index.html#contact">咨询项目</a>
+  <div class="lang" role="group" aria-label="语言"><a href="../fr/plot-lab.html" hreflang="fr" lang="fr" aria-label="Français">FR</a><a href="../en/plot-lab.html" hreflang="en" lang="en" aria-label="English">EN</a><a href="../es/plot-lab.html" hreflang="es" lang="es" aria-label="Español">ES</a><a href="../ar/plot-lab.html" hreflang="ar" lang="ar" aria-label="العربية">عربي</a><span aria-current="true" aria-label="中文">中文</span></div>
+</div>
+<main id="main">
+
+<section class="lab" id="labRoot">
+  <div class="lab-stage">
+    <div class="lab-canvas" aria-label="地块上建筑的 3D 模型。拖动可旋转。"></div>
+    <div class="lab-title">
+      <h1 class="display d-l" data-lines>地块实验室</h1>
+      <p style="margin-top:6px;max-width:27em">勾勒项目的初步构想，然后发送给建筑师。</p>
+    </div>
+    <div class="lab-compass" role="img" aria-label="指示正北的指南针"><i aria-hidden="true"><b>N</b></i></div>
+    <p class="lab-hint">拖动旋转 · 滚动或双指缩放</p>
+    <p class="lab-credit hide">Imagery © Esri, Maxar, Earthstar Geographics</p>
+  </div>
+  <aside class="lab-panel" data-lenis-prevent aria-label="研究设置">
+    <div class="lab-plot">
+      <strong id="plotLabel"></strong>
+      <span id="plotDetail"></span>
+      <div class="lab-plot-actions"><button class="mini" id="plotPick" type="button"></button><button class="link" id="plotReset" type="button">返回示例</button></div>
+    </div>
+    <div class="seg" role="group" aria-label="项目类型"><button type="button" data-program="villa">别墅</button><button type="button" data-program="apartments">公寓</button><button type="button" data-program="hotel">酒店</button></div>
+    <div class="ctl" id="labAreaCtl"><label for="labArea"><span>地块面积</span><output id="outArea"></output></label><input id="labArea" type="range" step="50"></div>
+    <div class="ctl"><label for="labCover"><span>建筑覆盖率</span><output id="outCover"></output></label><input id="labCover" type="range" step="5"><p class="note lab-fit hide" id="labFitNote" role="status"></p></div>
+    <div class="ctl"><label for="labFloors"><span>层数</span><output id="outFloors"></output></label><input id="labFloors" type="range" step="1"></div>
+    <div class="ctl"><label for="labDay"><span>日期</span><output id="outDay"></output></label><input id="labDay" type="range" min="1" max="366" step="1"><div class="day-shortcuts"><button type="button" data-day="today">今天</button><button type="button" data-day="june"></button><button type="button" data-day="december"></button></div></div>
+    <div class="ctl"><label for="labHour"><span>地块当地时间</span><output id="outHour"></output></label><input id="labHour" type="range" min="0" max="24" step="0.25"><button class="link" id="labPlay" type="button" style="font-size:13px;margin-top:3px">播放一天的日照</button>
+      <p class="sun-facts"><span id="outSunTimes"></span><span id="outSunNow"></span></p></div>
+    <div class="seg" role="group" aria-label="装修标准"><button type="button" data-finish="standard">标准</button><button type="button" data-finish="premium">高级</button><button type="button" data-finish="highend">豪华</button></div>
+    <p class="note">仅供参考，所用单价为示例，有待 MMA 确认。实际限制取决于地块的规划条例，您绘制的地块也不能代替测量。容量按每套公寓 85 m²、每间客房 40 m² 估算。太阳位置根据地点和日期计算。地面按平坦、晴空显示，未计入周边建筑或山体的遮挡。</p>
+    <div class="lab-sticky">
+    <div class="lab-res" aria-live="polite">
+      <div><span>建筑面积</span><strong id="resFloor"></strong></div>
+      <div><span>容量估算</span><strong id="resCap"></strong></div>
+      <div class="wide"><span>初步预算（不含土地）</span><strong id="resBudget"></strong></div>
+    </div>
+    <div class="lab-actions">
+      <a class="btn" id="labSend" href="../zh/index.html#contact" target="_blank" rel="noopener">通过 WhatsApp 发送给 MMA <span class="arr" aria-hidden="true">&rarr;</span></a>
+      <button class="mini" id="labSave" type="button">保存方案</button>
+      <button class="mini" id="labShare" type="button">复制链接</button>
+    </div>
+    </div>
+  </aside>
+</section>
+<dialog class="plot-dialog" id="plotDialog" data-lenis-prevent aria-labelledby="plotDialogTitle">
+  <div class="plot-head">
+    <h2 class="display d-s" id="plotDialogTitle">查找您的地块</h2>
+    <form id="plotSearch" role="search">
+      <input id="plotQuery" type="search" autocomplete="off" aria-label="地址、地点或坐标" placeholder="地址、地点或坐标">
+      <button class="mini" type="submit">搜索</button>
+    </form>
+    <button class="mini" id="plotGps" type="button">使用我的位置</button>
+    <div class="seg" role="group" aria-label="地图类型"><button type="button" data-layer="satellite" aria-pressed="true">卫星</button><button type="button" data-layer="street" aria-pressed="false">街道</button></div>
+  </div>
+  <div class="plot-results" id="plotResults"></div>
+  <div class="plot-map-wrap"><div id="plotMap" dir="ltr"></div><span class="plot-cross" aria-hidden="true"></span></div>
+  <div class="plot-foot">
+    <p id="plotStatus" role="status"></p>
+    <div class="plot-tools">
+      <button class="mini" id="plotAddCentre" type="button">在十字准星处添加角点</button>
+      <button class="mini" id="plotUndo" type="button">撤销</button>
+      <button class="mini" id="plotClear" type="button">清除</button>
+      <button class="mini" id="plotCancel" type="button">关闭</button>
+      <button class="btn" id="plotUse" type="button" disabled>使用此地块 <span class="arr" aria-hidden="true">&rarr;</span></button>
+    </div>
+    <p class="note">搜索内容会发送至 OpenStreetMap，地图浏览会经由地图服务商。只有在您发送研究后，MMA 才会收到您的地块信息。</p>
+  </div>
+</dialog>
+<section class="section wrap white hide" id="labCompare" style="padding-block:clamp(40px,6vw,90px)">
+  <h2 class="display d-m" style="margin-bottom:22px">并排比较您的方案。</h2>
+  <div class="table-scroll"><table class="compare-table"><thead><tr><th scope=col>方案</th><th scope=col>类型</th><th scope=col>地块</th><th scope=col>覆盖率</th><th scope=col>层数</th><th scope=col>建筑面积</th><th scope=col>容量</th><th scope=col>装修标准</th><th scope=col>预算（MAD）</th><th scope=col></th></tr></thead><tbody id="labCompareBody"></tbody></table></div>
+</section>
+<section class="final">
+  <img src="../assets/img/tower-3.webp" alt="" loading="lazy" data-parallax="5">
+  <div class="final-body">
+    <h2 class="display d-l" data-lines>告诉我们您的地块，我们让您看到它的可能。</h2>
+    <div class="btn-row" data-reveal><a class="btn " href="../zh/index.html#contact">开始您的项目 <span class="arr" aria-hidden="true">&rarr;</span></a><a class="btn ghost" href="../zh/plot-lab.html">先用 3D 测试 <span class="arr" aria-hidden="true">&rarr;</span></a></div>
+  </div>
+</section>
+
+</main>
+<footer class="foot">
+  <div class="foot-grid">
+    <div><img class="foot-logo" src="../assets/logo-full-white.png" alt="MMA, Mharrech Mribah Architects" loading="lazy"></div>
+    <div><h4>浏览</h4><ul><li><a href="../zh/index.html#services">服务范围</a></li><li><a href="../zh/index.html#work">项目案例</a></li><li><a href="../zh/plot-lab.html">地块实验室</a></li><li><a href="../zh/index.html#process">合作流程</a></li></ul></div>
+    <div><h4>联系我们</h4><ul>
+      <li><a href="tel:+212661225067"><span dir="ltr">+212 661 22 50 67</span></a></li>
+      <li><a href="tel:+212633931542"><span dir="ltr">+212 633 93 15 42</span></a></li>
+      <li><a href="https://wa.me/212661225067?text=%E6%82%A8%E5%A5%BD%20MMA%EF%BC%8C%E6%88%91%E6%83%B3%E5%92%A8%E8%AF%A2%E4%B8%80%E4%B8%AA%E9%A1%B9%E7%9B%AE%E3%80%82/%20Hello%20MMA%2C%20I%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener">WhatsApp</a></li>
+    </ul></div>
+    <div><h4>事务所</h4><ul><li>摩洛哥丹吉尔</li><li><a href="../zh/index.html#contact">咨询项目</a></li></ul></div>
+  </div>
+  <div class="foot-end"><span dir="ltr">© 2026 MMA, Mharrech Mribah Architects</span><span>图片均为设计效果图。</span></div>
+</footer>
+<div class="dock">
+  <div class="dock-menu">
+    <a href="https://wa.me/212661225067?text=%E6%82%A8%E5%A5%BD%20MMA%EF%BC%8C%E6%88%91%E6%83%B3%E5%92%A8%E8%AF%A2%E4%B8%80%E4%B8%AA%E9%A1%B9%E7%9B%AE%E3%80%82/%20Hello%20MMA%2C%20I%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener">WhatsApp</a>
+    <a href="tel:+212661225067"><span dir="ltr">+212 661 22 50 67</span></a>
+    <a href="../zh/index.html#contact">咨询项目</a>
+  </div>
+  <button class="dock-btn" type="button" aria-expanded="false" aria-label="联系建筑师"><i></i><span>联系建筑师</span></button>
+</div>
+<div class="cursor" aria-hidden="true"></div>
+<script>window.MMA_I18N={"lab": {"rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]}, "ground": "G", "units": "套公寓", "rooms": "间客房", "oneVilla": "1 栋别墅", "play": "播放一天的日照", "pause": "暂停", "share": "复制链接", "copied": "链接已复制", "linkInBar": "链接已在地址栏中", "save": "保存方案", "saved": "已保存", "option": "方案", "remove": "移除", "programs": {"villa": "别墅", "apartments": "公寓", "hotel": "酒店"}, "finishes": {"standard": "标准", "premium": "高级", "highend": "豪华"}, "contactUrl": "../zh/index.html#contact", "locale": "en-GB", "dateLocale": "zh-CN", "m2": "m²", "mad": "MAD", "plotSample": "示例地块，丹吉尔", "plotSampleNote": "日照按丹吉尔的实际情况计算。方形地块、道路和周边建筑仅作示意。", "plotYours": "您的地块", "plotPick": "在地图上选择我的地块", "plotChange": "更改地块", "studyPlot": "Plot", "fitLimit": "受地块形状限制，矩形建筑的覆盖率约为 {pct} %，以下数字已按此计算。", "sunrise": "日出", "sunset": "日落", "noRiseSet": "该日期没有日出或日落", "sunNow": "太阳高度角 {alt}°，方位角 {az}°（自正北起算）", "sunBelow": "太阳位于地平线以下", "map": {"imagery": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", "imageryCredit": "Imagery © Esri, Maxar, Earthstar Geographics", "street": "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "streetCredit": "© <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a>", "drawHint": "找到您的地块，然后依次点击它的各个角点。", "moreCorners": "请继续：地块至少需要 3 个角点。", "zoomIn": "正在放大。请再次点击，以准确放置角点。", "measured": "测得面积：约 {area} m²。拖动角点可进行调整。", "crossing": "地块的边线相交了。请移动角点，或撤销上一个角点。", "tooSmall": "面积小于 {n} m²。请检查角点。", "tooLarge": "面积大于 {n} m²，超出了地块实验室的研究上限。", "searchNone": "未找到结果。请尝试附近的城镇，或粘贴坐标。", "searchFail": "搜索没有响应。请尝试手动移动地图。", "gpsFail": "无法获取您的位置。请检查浏览器权限，或改用搜索。", "loadFail": "地图无法加载。请检查网络连接后重试。"}, "noGl": "此浏览器不支持 3D 显示。您仍可使用各项设置查看数字。", "levelsText": "{n} 层", "send": {"whatsapp": "212661225067", "intro": "您好 MMA，这是我的地块研究。/ Hello MMA, here is my Plot Lab study.", "programs": {"villa": "别墅 / Villa", "apartments": "公寓 / Apartments", "hotel": "酒店 / Hotel"}}}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="../js/site.js"></script>
+<script type="module">import {mountLab} from '../js/lab.js';mountLab(document.getElementById('labRoot'));</script>
+</body>
+</html>
