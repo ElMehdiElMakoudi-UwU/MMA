@@ -30,7 +30,8 @@ function setUp(L, I, locale) {
   const $ = s => dlg.querySelector(s);
   const status = $('#plotStatus'), results = $('#plotResults'), useBtn = $('#plotUse');
 
-  const map = L.map($('#plotMap'), { zoomControl: true, attributionControl: true, maxZoom: 21 });
+  const map = L.map($('#plotMap'), { zoomControl: false, attributionControl: true, maxZoom: 21 });
+  L.control.zoom({ zoomInTitle: I.zoomInTitle, zoomOutTitle: I.zoomOutTitle }).addTo(map);
   map.attributionControl.setPrefix(false);
   const satellite = L.tileLayer(I.imagery, { maxNativeZoom: 19, maxZoom: 21, attribution: I.imageryCredit });
   const street = L.tileLayer(I.street, { maxNativeZoom: 19, maxZoom: 21, attribution: I.streetCredit });

@@ -476,6 +476,9 @@ export function mountLab(root) {
   const hourTxt = h => { const m = Math.round(h * 60) % 1440; return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
   const levelCode = f => (f === 1 ? I.ground : `${I.ground}+${f - 1}`);
   const levels = f => (I.levelsText ? I.levelsText.replace('{n}', f) : levelCode(f));
+  /* Counted nouns: the forms come from the page's language, which for Arabic has more than singular and plural */
+  const plural = new Intl.PluralRules(document.documentElement.lang);
+  const counted = (forms, n) => (forms[plural.select(n)] || forms.other).replace('{n}', fmt(n));
   const dateTxt = day => new Date(Date.UTC(yearOf(day), 0, day)).toLocaleDateString(I.dateLocale, { day: 'numeric', month: 'long', timeZone: 'UTC' });
 
   function calc(s = state) {
@@ -485,8 +488,8 @@ export function mountLab(root) {
     const buildLo = total * lo, buildHi = total * hi;
     const budgetLo = buildLo * (1 + .06 + .1), budgetHi = buildHi * (1 + .12 + .1);
     let cap = '';
-    if (s.program === 'apartments') cap = `${fmt(Math.floor(total * .8 / 85))} ${I.units}`;
-    else if (s.program === 'hotel') cap = `${fmt(Math.floor(total * .6 / 40))} ${I.rooms}`;
+    if (s.program === 'apartments') cap = counted(I.units, Math.floor(total * .8 / 85));
+    else if (s.program === 'hotel') cap = counted(I.rooms, Math.floor(total * .6 / 40));
     else cap = I.oneVilla;
     return { fp, total, cap, budgetLo, budgetHi, limited: fp < wanted * .99 };
   }
@@ -563,10 +566,7 @@ export function mountLab(root) {
     const type = { villa: 'home', apartments: 'rental', hotel: 'hospitality' }[state.program];
     let study = `${fmt(state.area)} ${I.m2}, ${state.cover} %, ${levelCode(state.floors)}, ${fmt(c.total)} ${I.m2}`;
     if (real) study += ` · ${I.studyPlot}: ${state.plot.lat0.toFixed(5)}, ${state.plot.lng0.toFixed(5)} · ${shareUrl()}`;
-    /* A language without a contact form sends the study by WhatsApp */
-    $('#labSend').href = I.send
-      ? `https://wa.me/${I.send.whatsapp}?text=${encodeURIComponent(`${I.send.intro}\n${I.send.programs[state.program]}: ${study}`)}`
-      : `${I.contactUrl}?type=${type}#study=${encodeURIComponent(study)}`;
+    $('#labSend').href = `${I.contactUrl}?type=${type}#study=${encodeURIComponent(study)}`;
   }
   function setLimits() {
     const L = LIMITS[state.program];

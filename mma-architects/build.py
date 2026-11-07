@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Generates the MMA Architects site: full pages in French, English, Spanish and Arabic, and one Chinese landing page.
+"""Generates the MMA Architects site: full pages in French, English, Spanish, Arabic and Chinese.
 
 Spanish, Arabic and Chinese text lives in translations.py. Run: python3 build.py"""
 import json
 from html import escape
 from pathlib import Path
 
-from translations import TR, ZH
+from translations import AR_COUNTS, TR, ZH
 
 ROOT = Path(__file__).parent
 PHONES = [("06 61 22 50 67", "212661225067"), ("06 33 93 15 42", "212633931542")]
@@ -18,9 +18,7 @@ STREET_CREDIT = '© <a href="https://www.openstreetmap.org/copyright" target="_b
 LANG = "en"
 PREFIX = ""
 OTHER_PATH = ""
-FULL_LANGS = ("fr", "en", "es", "ar")
-ZH_PAGES = ("index.html", "plot-lab.html")  # the only pages that exist in Chinese
-ZH_LANDING = True  # whether the Chinese page being built is the landing page, which holds the section anchors
+LANGS = ("fr", "en", "es", "ar", "zh")
 # code, name in its own language, label in the switch
 SWITCH = (("fr", "Français", "FR"), ("en", "English", "EN"), ("es", "Español", "ES"), ("ar", "العربية", "عربي"), ("zh", "中文", "中文"))
 LOCALES = {"fr": "fr-FR", "en": "en-GB", "es": "es-ES", "ar": "en-GB", "zh": "en-GB"}
@@ -42,6 +40,22 @@ def t(en, fr):
         MISSING.add((LANG, en))
         return en
     return entry if LANG == "zh" else entry[0 if LANG == "es" else 1]
+
+
+def counted(one, other):
+    """The forms of a counted noun, for the Plot Lab to choose from. Arabic has two more than the others."""
+    forms = {"one": t(*one), "other": t(*other)}
+    return {**forms, **AR_COUNTS[other[0]]} if LANG == "ar" else forms
+
+
+def in_english(fn):
+    """Runs a text function in English, for wording that has to reach the team as well as the visitor."""
+    global LANG
+    saved, LANG = LANG, "en"
+    try:
+        return fn()
+    finally:
+        LANG = saved
 
 
 def pick(pair):
@@ -70,12 +84,7 @@ def img(name):
 
 
 def url(path):
-    """Link to a page in the current language. Chinese pages that don't exist fall back to the landing page's contact section."""
-    if LANG == "zh":
-        if path in ZH_PAGES:
-            return f"{PREFIX}zh/{path}"
-        anchor = path if path.startswith("#") else "#contact"
-        return anchor if ZH_LANDING else f"{PREFIX}zh/index.html{anchor}"
+    """Link to a page in the current language."""
     return f"{PREFIX}{LANG}/{path}"
 
 
@@ -146,7 +155,7 @@ PROJECTS = [
          kind=("Apartments", "Appartements"),
          pitch=("Big homes on a small triangular plot.", "De grands logements sur un petit terrain triangulaire."),
          text=("A compact apartment building that fits generous homes onto a triangular plot. Hard geometry is where good planning pays: every corner of the floor plate is put to work.",
-               "Un immeuble compact qui installe de grands logements sur un terrain triangulaire. C'est sur les géométries difficiles que le plan fait la différence : chaque angle de l'étage est mis au travail."),
+               "Un immeuble compact qui installe de grands logements sur un terrain triangulaire. C'est sur les géométries difficiles que le plan fait la différence : chaque angle de l'étage est mis à profit."),
          specs=[], compare=("alma-dawn", "alma-night", ("Dawn", "Aube"), ("Night", "Nuit")), gallery=[], plan="alma-plan"),
     dict(slug="suites-tower", type="hospitality", cover="suites-1", hero="suites-1",
          name=("Suites tower", "Tour de suites"), place=None,
@@ -215,27 +224,24 @@ def compare_block(cmp, cls="", tease=False):
 
 # ---------------------------------------------------------------- Layout
 def nav_links():
-    if LANG == "zh":
-        return [("#services", "服务范围", "services"), ("#work", "项目案例", "work"), ("plot-lab.html", "地块实验室", "lab"), ("#process", "合作流程", "process")]
     return [("projects.html", t("Projects", "Projets"), "projects"), ("plot-lab.html", t("Plot Lab", "Plot Lab"), "lab"),
             ("expertise.html", t("Expertise", "Expertise"), "expertise"), ("studio.html", t("Studio", "Studio"), "studio")]
 
 
 def lang_switch(path):
-    """Language switch: the current language is marked, the others link to the same page (or the Chinese landing page if it has no Chinese version)."""
+    """Language switch: the current language is marked, the others link to the same page."""
     parts = []
     for code, name, label in SWITCH:
         if code == LANG:
             parts.append(f'<span aria-current="true" aria-label="{name}">{label}</span>')
         else:
-            target = "index.html" if code == "zh" and path not in ZH_PAGES else path
-            parts.append(f'<a href="{PREFIX}{code}/{target}" hreflang="{code}" lang="{code}" aria-label="{name}">{label}</a>')
+            parts.append(f'<a href="{PREFIX}{code}/{path}" hreflang="{code}" lang="{code}" aria-label="{name}">{label}</a>')
     return f'<div class="lang" role="group" aria-label="{t("Language", "Langue")}">{"".join(parts)}</div>'
 
 
 def layout(path, title, desc, main, active="", extra_head="", extra_js="", i18n=None):
     global OTHER_PATH
-    alternates = "".join(f'<link rel="alternate" hreflang="{c}" href="{PREFIX}{c}/{path}">\n' for c in FULL_LANGS + (("zh",) if path in ZH_PAGES else ()) if c != LANG)
+    alternates = "".join(f'<link rel="alternate" hreflang="{c}" href="{PREFIX}{c}/{path}">\n' for c in LANGS if c != LANG)
     fonts = f"{LATIN_FONTS}&{FONTS[LANG]}" if LANG in FONTS else LATIN_FONTS
     links = "".join(f'<a href="{url(h)}"{" aria-current=page" if k == active else ""}>{escape(l)}</a>' for h, l, k in nav_links())
     mobile = "".join(f'<a class="display" href="{url(h)}">{escape(l)}</a>' for h, l, k in nav_links())
@@ -651,7 +657,7 @@ def page_lab():
     fin = "".join(f'<button type="button" data-finish="{k}">{escape(l)}</button>' for k, l in finishes)
     i18n = {"lab": {
         "rates": {"standard": [5500, 7500], "premium": [8000, 12000], "highend": [12500, 18000]},
-        "ground": t("G", "R"), "units": t("apartments", "appartements"), "rooms": t("rooms", "chambres"), "oneVilla": t("1 villa", "1 villa"),
+        "ground": t("G", "R"), "units": counted(("{n} apartment", "{n} appartement"), ("{n} apartments", "{n} appartements")), "rooms": counted(("{n} room", "{n} chambre"), ("{n} rooms", "{n} chambres")), "oneVilla": t("1 villa", "1 villa"),
         "play": t("Play the day", "Lancer la journée"), "pause": t("Pause", "Pause"),
         "share": t("Copy link", "Copier le lien"), "copied": t("Link copied", "Lien copié"), "linkInBar": t("Link is in the address bar", "Lien dans la barre d'adresse"),
         "save": t("Save option", "Garder l'option"), "saved": t("Saved", "Gardée"),
@@ -670,6 +676,7 @@ def page_lab():
         "sunBelow": t("The sun is below the horizon", "Le soleil est sous l'horizon"),
         "map": {
             "imagery": IMAGERY_URL, "imageryCredit": IMAGERY_CREDIT, "street": STREET_URL, "streetCredit": STREET_CREDIT,
+            "zoomInTitle": t("Zoom in", "Zoomer"), "zoomOutTitle": t("Zoom out", "Dézoomer"),
             "drawHint": t("Find your plot, then click each of its corners.", "Trouvez votre terrain, puis cliquez sur chacun de ses angles."),
             "moreCorners": t("Keep going: a plot needs at least 3 corners.", "Continuez : il faut au moins 3 angles."),
             "zoomIn": t("Zooming in. Click again to place the corner accurately.", "Zoom en cours. Cliquez de nouveau pour placer l'angle avec précision."),
@@ -684,15 +691,9 @@ def page_lab():
         },
         "noGl": t("3D isn't available in this browser. You can still use the controls to see the figures.", "La 3D n'est pas disponible dans ce navigateur. Les réglages restent utilisables pour voir les chiffres."),
     }}
-    send_attrs = ""
     if LANG == "zh":
-        # No Chinese contact form: the study goes by WhatsApp, worded so that the French, English and Arabic speaking team can read it.
-        i18n["lab"].update({
-            "levelsText": "{n} 层", "ground": "G", "studyPlot": "Plot",
-            "send": {"whatsapp": PHONES[0][1], "intro": "您好 MMA，这是我的地块研究。/ Hello MMA, here is my Plot Lab study.",
-                     "programs": {"villa": "别墅 / Villa", "apartments": "公寓 / Apartments", "hotel": "酒店 / Hotel"}},
-        })
-        send_attrs = ' target="_blank" rel="noopener"'
+        # The study reaches a team that reads French, English and Arabic, so its plot and level codes stay Latin.
+        i18n["lab"].update({"levelsText": "{n} 层", "ground": "G", "studyPlot": "Plot"})
     th = "".join(f"<th scope=col>{escape(x)}</th>" for x in [t("Option", "Option"), t("Type", "Type"), t("Plot", "Terrain"), t("Coverage", "Emprise"), t("Levels", "Niveaux"), t("Floor area", "Surface"), t("Capacity", "Capacité"), t("Finish", "Finition"), t("Budget (MAD)", "Budget (MAD)"), ""])
     main = f'''
 <section class="lab" id="labRoot">
@@ -729,7 +730,7 @@ def page_lab():
       <div class="wide"><span>{t("First budget, excluding land", "Premier budget, hors terrain")}</span><strong id="resBudget"></strong></div>
     </div>
     <div class="lab-actions">
-      <a class="btn" id="labSend" href="{url("contact.html")}"{send_attrs}>{t("Send this study to MMA", "Envoyer cette étude à MMA")} {ARROW}</a>
+      <a class="btn" id="labSend" href="{url("contact.html")}">{t("Send this study to MMA", "Envoyer cette étude à MMA")} {ARROW}</a>
       <button class="mini" id="labSave" type="button">{t("Save option", "Garder l'option")}</button>
       <button class="mini" id="labShare" type="button">{t("Copy link", "Copier le lien")}</button>
     </div>
@@ -828,8 +829,8 @@ def page_studio():
 </section>
 <section class="wrap" style="padding-bottom:clamp(60px,8vw,120px)">
   <div class="partners">
-    <article class="partner" data-reveal="img"><img src="{img("partner-mharrech")}" alt="" loading="lazy"><div class="partner-body"><span class="eyebrow" style="color:inherit">{t("Architect, partner", "Architecte, associé")}</span><h2 class="display d-m" style="margin-top:6px">Mharrech</h2></div></article>
-    <article class="partner" data-reveal="img"><img src="{img("partner-mribah")}" alt="" loading="lazy"><div class="partner-body"><span class="eyebrow" style="color:inherit">{t("Architect, partner", "Architecte, associé")}</span><h2 class="display d-m" style="margin-top:6px">Mribah</h2></div></article>
+    <article class="partner" data-reveal="img"><img src="{img("partner-mharrech")}" alt="" loading="lazy"><div class="partner-body"><span class="eyebrow" style="color:inherit">{t("Architect, partner", "Architecte, associé(e)")}</span><h2 class="display d-m" style="margin-top:6px">Mharrech</h2></div></article>
+    <article class="partner" data-reveal="img"><img src="{img("partner-mribah")}" alt="" loading="lazy"><div class="partner-body"><span class="eyebrow" style="color:inherit">{t("Architect, partner", "Architecte, associé(e)")}</span><h2 class="display d-m" style="margin-top:6px">Mribah</h2></div></article>
   </div>
 </section>
 <section class="section wrap light">
@@ -847,16 +848,24 @@ def page_studio():
 
 # ---------------------------------------------------------------- Contact: the project brief
 def page_contact():
-    types = [("home", t("A villa or home", "Une villa ou une maison"), t("For you, your family or to resell", "Pour vous, votre famille ou la revente")),
-             ("rental", t("An apartment building", "Un immeuble d'appartements"), t("To rent or to sell", "À louer ou à vendre")),
-             ("hospitality", t("A hotel or guest house", "Un hôtel ou une maison d'hôtes"), t("From a riad to a resort", "Du riad au complexe")),
-             ("estate", t("A multi-building estate", "Un domaine de plusieurs bâtiments"), t("Villas, guest spaces, shared gardens", "Villas, accueil, jardins communs")),
-             ("interior", t("Interior design", "L'architecture d'intérieur"), t("For a home, a hotel or a rental", "Pour une maison, un hôtel ou une location")),
-             ("other", t("Something else", "Autre chose"), t("Offices, retail, renovation...", "Bureaux, commerces, rénovation...")),]
-    stages = [("plot", t("I have a plot", "J'ai un terrain"), t("And I want to know what it can become", "Et je veux savoir ce qu'il peut devenir")),
-              ("looking", t("I'm looking for one", "Je cherche un terrain"), t("And I want advice before buying", "Et je veux un avis avant d'acheter")),
-              ("building", t("I have a building", "J'ai un bâtiment"), t("And I want to transform it", "Et je veux le transformer"))]
-    budgets = [("b1", t("Under 2M MAD", "Moins de 2 M MAD"), ""), ("b2", t("2–5M MAD", "2 à 5 M MAD"), ""), ("b3", t("5–20M MAD", "5 à 20 M MAD"), ""), ("b4", t("Over 20M MAD", "Plus de 20 M MAD"), ""), ("b0", t("Not sure yet", "Pas encore défini"), "")]
+    def options():
+        types = [("home", t("A villa or home", "Une villa ou une maison"), t("For you, your family or to resell", "Pour vous, votre famille ou la revente")),
+                 ("rental", t("An apartment building", "Un immeuble d'appartements"), t("To rent or to sell", "À louer ou à vendre")),
+                 ("hospitality", t("A hotel or guest house", "Un hôtel ou une maison d'hôtes"), t("From a riad to a resort", "Du riad au complexe")),
+                 ("estate", t("A multi-building estate", "Un domaine de plusieurs bâtiments"), t("Villas, guest spaces, shared gardens", "Villas, accueil, jardins communs")),
+                 ("interior", t("Interior design", "L'architecture d'intérieur"), t("For a home, a hotel or a rental", "Pour une maison, un hôtel ou une location")),
+                 ("other", t("Something else", "Autre chose"), t("Offices, retail, renovation...", "Bureaux, commerces, rénovation...")),]
+        stages = [("plot", t("I have a plot", "J'ai un terrain"), t("And I want to know what it can become", "Et je veux savoir ce qu'il peut devenir")),
+                  ("looking", t("I'm looking for one", "Je cherche un terrain"), t("And I want advice before buying", "Et je veux un avis avant d'acheter")),
+                  ("building", t("I have a building", "J'ai un bâtiment"), t("And I want to transform it", "Et je veux le transformer"))]
+        budgets = [("b1", t("Under 2M MAD", "Moins de 2 M MAD"), ""), ("b2", t("2–5M MAD", "2 à 5 M MAD"), ""), ("b3", t("5–20M MAD", "5 à 20 M MAD"), ""), ("b4", t("Over 20M MAD", "Plus de 20 M MAD"), ""), ("b0", t("Not sure yet", "Pas encore défini"), "")]
+        return types, stages, budgets
+
+    types, stages, budgets = options()
+
+    def labels():
+        return {"sType": t("Project", "Projet"), "sStage": t("Status", "Situation"), "sCity": t("City", "Ville"), "sBudget": t("Budget", "Budget"),
+                "sStudy": t("Plot Lab study", "Étude Plot Lab"), "sName": t("Name", "Nom"), "sPhone": t("Phone", "Téléphone"), "sMsg": t("Notes", "Notes")}
 
     def opts(field, items):
         return '<div class="opts">' + "".join(
@@ -870,10 +879,16 @@ def page_contact():
         "errType": t("Choose a type of project to continue.", "Choisissez un type de projet pour continuer."),
         "errStage": t("Tell us where you are to continue.", "Indiquez où vous en êtes pour continuer."),
         "errContact": t("Add your name and phone number so we can reply.", "Ajoutez votre nom et votre téléphone pour que nous puissions répondre."),
-        "sType": t("Project", "Projet"), "sStage": t("Status", "Situation"), "sCity": t("City", "Ville"), "sBudget": t("Budget", "Budget"),
-        "sStudy": t("Plot Lab study", "Étude Plot Lab"), "sName": t("Name", "Nom"), "sPhone": t("Phone", "Téléphone"), "sMsg": t("Notes", "Notes"),
+        **labels(),
         "waIntro": t("Hello MMA, here is my project:", "Bonjour MMA, voici mon projet :"), "matches": matches,
     }
+    language_note = ""
+    if LANG == "zh":
+        # The team doesn't read Chinese, so the WhatsApp message carries the English too.
+        en_types, en_stages, en_budgets = in_english(options)
+        i18n["team"] = {"labels": in_english(labels), "values": {
+            "type": {k: a for k, a, _ in en_types}, "stage": {k: a for k, a, _ in en_stages}, "budget": {k: a for k, a, _ in en_budgets}}}
+        language_note = '<p class="note" style="margin-top:8px">我们目前使用法语、英语和阿拉伯语沟通，欢迎您的本地代表或翻译一同参与。您选择的选项将以中英双语发送，您填写的文字不会自动翻译。</p>'
     side = f'<img src="{img("hotel-3")}" data-key="default" class="on" alt="">' + "".join(f'<img src="{img(im)}" data-key="{key}" alt="" loading="lazy">' for key, im, *_ in TYPES)
     main = f'''
 <section class="brief">
@@ -899,6 +914,7 @@ def page_contact():
         <a class="btn ghost" href="tel:+{PHONES[0][1]}">{t("Call", "Appeler")} {phone_text(0)}</a>
       </div>
       <p class="note" style="margin-top:14px">{t("WhatsApp opens with your brief written out, so you can review it before you send it.", "WhatsApp s'ouvre avec votre brief rédigé, pour que vous le relisiez avant de l'envoyer.")}</p>
+      {language_note}
     </div>
     <p class="brief-err" role="alert"></p>
     <div class="brief-nav">
@@ -911,69 +927,6 @@ def page_contact():
     return layout("contact.html", t("Start a project · MMA Architects", "Lancer un projet · MMA Architects"), t("Tell MMA about your project in under a minute.", "Présentez votre projet à MMA en moins d'une minute."), main, "", i18n=i18n)
 
 
-# ---------------------------------------------------------------- Chinese landing page
-def page_zh():
-    """One focused page for Chinese companies in Morocco. Apart from the Plot Lab, the full site is not translated into Chinese."""
-    services = [
-        ("apartments-day", "员工住宅与管理层公寓", "为派驻摩洛哥的团队规划住宿：在规划条例允许的范围内，测算可建户数、户型与停车位。我们设计过一栋 180 户、总建筑面积 27,024 m² 的住宅楼。"),
-        ("tower-3", "办公与配套建筑", "为您在丹吉尔、卡萨布兰卡等城市的机构设计办公及配套空间，在动工之前把功能、动线与预算确定下来。"),
-        ("hotel-dusk", "酒店与商务接待", "统筹客房、动线与服务空间。我们设计过舍夫沙万一座总建筑面积 6,250 m² 的四星级酒店。"),
-    ]
-    service_html = "".join(
-        f'<article class="invest-item"><div class="ii-img" data-reveal="img"><img src="{img(im)}" alt="" loading="lazy"></div><div><h3 class="display d-m">{title}</h3><p class="muted" style="margin-top:10px">{body}</p></div></article>'
-        for im, title, body in services)
-    works = [("180-apartments-tangier", "180 户住宅楼", "丹吉尔 · 住宅"), ("residential-tower-tangier", "住宅塔楼", "丹吉尔 · 住宅"),
-             ("hotel-chefchaouen", "四星级酒店", "舍夫沙万 · 酒店"), ("suites-tower", "套房塔楼", "酒店")]
-    work_html = "".join(
-        f'<article class="pcard"><div class="pcard-media"><img src="{img(by_slug(s)["cover"])}" alt="{name}" loading="lazy"></div><div class="pcard-info"><h3>{name}</h3><span>{meta}</span></div></article>'
-        for s, name, meta in works)
-    steps = [("可行性研究", "研读规划条例，测试地块的实际承载能力，然后再决定下一步。"), ("方案设计", "提供平面、体量与三维视图，便于比较和反馈。"),
-             ("扩初设计", "深化选定方案，协调平面、剖面、立面与材料。"), ("建筑许可", "准备并提交申请，并与主管部门跟进。"),
-             ("承包商比选", "提供施工文件和可比报价，并给出明确建议。"), ("工地监理", "定期巡视并提交报告，直至交付。")]
-    step_html = "".join(f'<article class="stage"><b>{n}</b><h3>{a}</h3><p>{b}</p></article>' for n, (a, b) in enumerate(steps, 1))
-    wa = wa_link(t("Hello MMA, I would like to talk about a project.", ""))
-    main = f"""
-<section class="ph-hero">
-  <img src="{img("apartments-dusk")}" alt="丹吉尔 180 户住宅楼效果图" fetchpriority="high">
-  <div class="ph-hero-body">
-    <span class="eyebrow" style="color:var(--plaster)">摩洛哥丹吉尔 · 建筑设计事务所</span>
-    <h1 class="display d-xl" data-lines>在摩洛哥建设，先读懂土地。</h1>
-    <p class="lede" style="margin-top:18px" data-reveal>MMA 为在摩洛哥投资建设的企业提供建筑设计服务，从可行性研究、建筑许可到工地监理，由同一支团队全程负责。</p>
-    <div class="btn-row" style="margin-top:22px" data-reveal>{btn("咨询项目", "#contact")}{btn("查看项目案例", "#work", "ghost")}</div>
-  </div>
-</section>
-<section class="section wrap light zh-anchor" id="services">
-  <h2 class="display d-l" data-lines style="margin-bottom:clamp(28px,4vw,60px)">我们能为您的团队设计什么</h2>
-  <div>{service_html}</div>
-</section>
-<section class="section wrap zh-anchor" id="work">
-  <h2 class="display d-l" data-lines style="margin-bottom:clamp(28px,4vw,60px)">项目案例</h2>
-  <div class="pi-grid zh-works">{work_html}</div>
-  <div class="facts" style="margin-top:clamp(40px,6vw,80px)">
-    <div class="fact"><strong>27,024 m²</strong><span>最大项目的总建筑面积</span></div>
-    <div class="fact"><strong>180</strong><span>单栋住宅楼的户数</span></div>
-    <div class="fact"><strong>6,250 m²</strong><span>舍夫沙万四星级酒店</span></div>
-    <div class="fact"><strong>8</strong><span>精选项目</span></div>
-  </div>
-</section>
-<section class="section wrap zh-anchor" id="process" style="padding-top:0">
-  <h2 class="display d-l" data-lines style="margin-bottom:clamp(28px,4vw,60px)">六个阶段，一支团队</h2>
-  <div class="zh-stages">{step_html}</div>
-  <p class="lede" style="margin-top:clamp(24px,3vw,44px)" data-reveal>每个阶段经您确认后才进入下一阶段。您也可以只委托可行性研究，然后再做决定。</p>
-</section>
-<section class="final zh-anchor" id="contact">
-  <img src="{img("tower-3")}" alt="" loading="lazy" data-parallax="5">
-  <div class="final-body">
-    <h2 class="display d-l" data-lines>告诉我们您的地块和项目需求。</h2>
-    <div class="btn-row" data-reveal><a class="btn" href="{wa}" target="_blank" rel="noopener">通过 WhatsApp 联系 {ARROW}</a><a class="btn ghost" href="tel:+{PHONES[0][1]}">致电 {phone_text(0)}</a></div>
-    <p class="lede" style="margin-top:22px" data-reveal>我们目前使用法语、英语和阿拉伯语沟通，欢迎您的本地代表或翻译一同参与。</p>
-    <p style="margin-top:14px" data-reveal><a class="link" href="{PREFIX}en/projects.html">查看全部项目（英文）</a></p>
-  </div>
-</section>
-"""
-    return layout("index.html", "MMA Architects · 摩洛哥建筑设计事务所", "MMA 是位于摩洛哥丹吉尔的建筑设计事务所，为在摩洛哥投资建设的企业提供从可行性研究到工地监理的服务。", main)
-
-
 # ---------------------------------------------------------------- Build
 def write(rel, html):
     p = ROOT / rel
@@ -982,9 +935,9 @@ def write(rel, html):
 
 
 def build():
-    global LANG, PREFIX, ZH_LANDING
+    global LANG, PREFIX
     count = 0
-    for LANG in ("en", "fr", "es", "ar"):
+    for LANG in ("en", "fr", "es", "ar", "zh"):
         PREFIX = "../"
         for name, fn in (("index", page_home), ("projects", page_projects), ("plot-lab", page_lab), ("expertise", page_expertise), ("studio", page_studio), ("contact", page_contact)):
             write(f"{LANG}/{name}.html", fn())
@@ -993,12 +946,6 @@ def build():
         for i, p in enumerate(PROJECTS):
             write(f'{LANG}/projects/{p["slug"]}.html', page_project(p, PROJECTS[(i + 1) % len(PROJECTS)]))
             count += 1
-    LANG, PREFIX = "zh", "../"
-    ZH_LANDING = True
-    write("zh/index.html", page_zh())
-    ZH_LANDING = False
-    write("zh/plot-lab.html", page_lab())
-    count += 2
     if MISSING:
         raise SystemExit("Missing translations (add them to translations.py):\n" + "\n".join(f"  [{l}] {s}" for l, s in sorted(MISSING)))
     write("index.html", '''<!doctype html>

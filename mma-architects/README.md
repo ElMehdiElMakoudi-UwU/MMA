@@ -1,9 +1,10 @@
 # MMA Architects website
 
-Static site with full pages in French (`fr/`), English (`en/`), Spanish (`es/`) and Arabic (`ar/`), plus a Chinese landing page and Plot Lab (`zh/`). Pages are generated from `build.py`.
+Static site with full pages in French (`fr/`), English (`en/`), Spanish (`es/`), Arabic (`ar/`) and Chinese (`zh/`). Pages are generated from `build.py`.
 
 - Edit English and French text and projects in `build.py`, then run `python3 build.py`.
-- Spanish and Arabic text, and Chinese layout and Plot Lab text, are in `translations.py`, keyed by the English. If an English string changes, the build stops and lists what to update. The Chinese page's own content is in `page_zh()` in `build.py`.
+- Spanish, Arabic and Chinese text is in `translations.py`, keyed by the English. If an English string changes, the build stops and lists what to update.
+- The team doesn't read Chinese, so WhatsApp messages from the Chinese pages carry the English too. Anything the visitor types is sent as written.
 - Styles are in `css/site.css`, shared motion in `js/site.js`, the 3D Plot Lab in `js/lab.js`, its sun and plot maths in `js/plot-geo.js`, and its map in `js/plot-map.js`.
 - Preview through a local server (the 3D model needs one): `python3 -m http.server 8123`.
 - After changing `build.py`, run it and commit the regenerated `en/`, `fr/`, `es/`, `ar/`, `zh/` and `404.html`. The container serves those files and does not run the build.

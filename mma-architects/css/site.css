@@ -633,14 +633,6 @@ html[lang=zh] .display{line-height:1.25}
 html[lang=zh] .d-xl{font-size:clamp(2.5rem,6vw,7rem)}
 html[lang=zh] .d-l{font-size:clamp(2.1rem,4.8vw,5.4rem)}
 html[lang=zh] .line{padding-bottom:.2em;margin-bottom:-.2em}
-html[lang=zh] .ph-hero-body .lede{max-width:34em}
-.zh-anchor{scroll-margin-top:60px}
-.zh-works{padding:0}
-.zh-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,28px)}
-.zh-stages .stage{width:auto;min-height:clamp(220px,20vw,300px)}
-.zh-stages .stage h3{margin-top:auto}
-@media (max-width:1040px){.zh-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:560px){.zh-stages{grid-template-columns:1fr}.zh-stages .stage{min-height:0}.zh-stages .stage h3{margin-top:18px;padding-top:0}}
 
 /* Morph images between pages where the browser supports it */
 @view-transition{navigation:auto}

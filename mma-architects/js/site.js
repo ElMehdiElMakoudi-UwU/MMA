@@ -69,19 +69,32 @@
     if (e.persisted && wipe) gsap && gsap.set(wipe, { clipPath: 'polygon(100% 0,100% 0,100% 100%,100% 100%)' });
   });
 
+  /* Chinese has no spaces to break on, so its headings are cut into words, with punctuation kept on the word before */
+  const cjk = root.lang === 'zh', wordGap = cjk ? '' : ' ';
+  function headingWords(text) {
+    if (!cjk) return text.split(/\s+/);
+    if (!window.Intl || !Intl.Segmenter) return text.match(/\S[，。！？、：；）》]*\s*/gu) || [text];
+    const words = [];
+    for (const { segment, isWordLike } of new Intl.Segmenter('zh', { granularity: 'word' }).segment(text)) {
+      if (!isWordLike && words.length) words[words.length - 1] += segment;
+      else words.push(segment);
+    }
+    return words;
+  }
+
   /* Split headings into masked lines, once the real font has set the line breaks */
   function splitLines() {
     $$('[data-lines]').forEach(el => {
       const text = el.textContent.trim();
       el.setAttribute('aria-label', text);
-      el.innerHTML = text.split(/\s+/).map(w => `<span class="w-m" aria-hidden="true" style="display:inline-block">${w}</span>`).join(' ');
+      el.innerHTML = headingWords(text).map(w => `<span class="w-m" aria-hidden="true" style="display:inline-block">${w}</span>`).join(wordGap);
       const lines = [];
       $$('.w-m', el).forEach(s => {
         const top = s.offsetTop, last = lines[lines.length - 1];
         if (last && Math.abs(last.top - top) < 6) last.words.push(s.textContent);
         else lines.push({ top, words: [s.textContent] });
       });
-      el.innerHTML = lines.map(l => `<span class="line" aria-hidden="true"><span>${l.words.join(' ')}</span></span>`).join('');
+      el.innerHTML = lines.map(l => `<span class="line" aria-hidden="true"><span>${l.words.join(wordGap)}</span></span>`).join('');
       el.classList.add('split');
       if (!motion) return;
       const inHero = el.closest('.hero, .ph-hero, .page-head, .brief, .lab');
@@ -383,21 +396,28 @@
     }
     function buildSummary() {
       const rows = [
-        [I.sType, labelOf('type')],
-        [I.sStage, labelOf('stage')],
-        [I.sCity, $('#fCity').value.trim()],
-        [I.sBudget, labelOf('budget')],
-        [I.sStudy, study || ''],
-        [I.sName, $('#fName').value.trim()],
-        [I.sPhone, $('#fPhone').value.trim()],
-        [I.sMsg, $('#fMsg').value.trim()]
+        ['sType', labelOf('type'), 'type'],
+        ['sStage', labelOf('stage'), 'stage'],
+        ['sCity', $('#fCity').value.trim()],
+        ['sBudget', labelOf('budget'), 'budget'],
+        ['sStudy', study || ''],
+        ['sName', $('#fName').value.trim()],
+        ['sPhone', $('#fPhone').value.trim()],
+        ['sMsg', $('#fMsg').value.trim()]
       ].filter(r => r[1]);
       const box = $('#summary');
       box.textContent = '';
       rows.forEach(([k, v]) => {
         const d = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd');
-        dt.textContent = k; dd.textContent = v; d.append(dt, dd); box.append(d);
+        dt.textContent = I[k]; dd.textContent = v; d.append(dt, dd); box.append(d);
       });
+      /* I.team holds the English wording for a language the team doesn't read, so the message is sent in both */
+      const T = I.team;
+      const messageLine = ([k, v, field]) => {
+        if (!T) return `${I[k]}: ${v}`;
+        const en = field && T.values[field][state[field]];
+        return `${I[k]} / ${T.labels[k]}: ${v}${en ? ` / ${en}` : ''}`;
+      };
       const m = I.matches[state.type];
       const match = $('#match');
       if (m) {
@@ -406,7 +426,7 @@
         match.href = m.url;
         match.classList.remove('hide');
       } else match.classList.add('hide');
-      const text = [I.waIntro].concat(rows.map(([k, v]) => `${k}: ${v}`)).join('\n');
+      const text = [I.waIntro].concat(rows.map(messageLine)).join('\n');
       $$('[data-wa]').forEach(a => { a.href = `https://wa.me/${a.dataset.wa}?text=${encodeURIComponent(text)}`; });
     }
     sync();
